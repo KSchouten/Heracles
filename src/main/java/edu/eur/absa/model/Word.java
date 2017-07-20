@@ -45,6 +45,7 @@ public class Word extends DataEntity {
 	 * This is the ideal way of creating the first <code>Word</code> for a new textual unit.
 	 * @param word
 	 * @param startOffset
+	 * @param textualUnit
 	 * @param dataset
 	 */
 	public Word(String word, int startOffset,Span textualUnit, Dataset dataset){
@@ -56,10 +57,10 @@ public class Word extends DataEntity {
 	/**
 	 * <p>Creates a basic <code>Word</code> object, using the length of <code>word</code> to compute the <code>endOffset</code>.
 	 * It links this <code>Word</code> object to <code>previousWord</code> and this <code>Word</code> object is set 
-	 * as <code>nextWord</code> of <code>previousWord</code>.</p>
-	 * It also sets the <code>Document</code> to the document value of <code>previousWord</code>.
-	 * <p>This is the preferred way of creating <code>Word</code>s, as it automatically creates the links between <code>Word</code>s.
-	 * <p>Setting the <code>previousWord</code> parameter to <code>null</code> will result in a <code>NullPointerException<code>. 
+	 * as <code>nextWord</code> of <code>previousWord</code>.
+	 * It also sets the <code>Document</code> to the document value of <code>previousWord</code>.</p>
+	 * <p>This is the preferred way of creating <code>Word</code>s, as it automatically creates the links between <code>Word</code>s.</p>
+	 * <p>Setting the <code>previousWord</code> parameter to <code>null</code> will result in a <code>NullPointerException</code>. </p>
 	 * @param word
 	 * @param startOffset
 	 * @param previousWord

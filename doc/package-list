@@ -1,0 +1,11 @@
+edu.eur.absa
+edu.eur.absa.algorithm
+edu.eur.absa.algorithm.demo
+edu.eur.absa.data
+edu.eur.absa.evaluation.evaluators
+edu.eur.absa.evaluation.results
+edu.eur.absa.model
+edu.eur.absa.model.exceptions
+edu.eur.absa.nlp
+edu.eur.absa.nlp.tools
+edu.stanford.nlp.pipeline

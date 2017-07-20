@@ -69,7 +69,7 @@ public class Prediction {
 	/**
 	 * Evaluators expect a Set of Predictions, but often there is just one
 	 * This method simply wraps this Prediction object into a HashSet for convenience
-	 * @return
+	 * @return A HashSet containing just this Prediction
 	 */
 	public HashSet<Prediction> getSingletonSet(){
 		HashSet<Prediction> singletonSet = new HashSet<>();

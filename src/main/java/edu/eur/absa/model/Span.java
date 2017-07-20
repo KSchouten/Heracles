@@ -34,14 +34,14 @@ public class Span extends DataEntity implements NavigableSet<Word> {
 	
 	private HashMap<Integer, Word> wordsByOrder = new HashMap<>();
 	/**
-	 * Standard constructor to create a Span object. Note that all words that are contained in a single <code>Span</code> have to originate from the same {@link Document}.
+	 * Standard constructor to create a Span object. Note that all words that are contained in a single <code>Span</code> have to originate from the same textual unit.
 	 * @param spanType A textual label denoting the kind of <code>Span</code>. Some basic ones would be "word", "sentence", "aspect", etc.
 	 * @param firstWord
 	 * @param lastWord
-	 * @throws IllegalSpanException If the first and last word do not originate from the same <code>Document</span>.
+	 * @throws IllegalSpanException If the first and last word do not originate from the textual unit.
 	 */
 	public Span(String spanType, Word firstWord, Word lastWord) throws IllegalSpanException{
-		//All words that are contained in a single span have to originate from the same Document
+		//All words that are contained in a single span have to originate from the same textual unit
 		if (!firstWord.getTextualUnit().equals(lastWord.getTextualUnit()))
 			throw new IllegalSpanException();
 		
@@ -61,8 +61,6 @@ public class Span extends DataEntity implements NavigableSet<Word> {
 
 	/**
 	 * Special 'empty' Span constructor. This is used to create an empty Span for a new textual unit, since no Words are yet added to it. 
-	 * For textual units you can use this with the <code>add(Word word)</code> method to add new Words to the Span whenever they are added
-	 * to the Document.
 	 * This Span is its own textual unit so this constructor sets <code>textualUnit=this</code>. 
 	 * This constructor will automatically register this span with its parent Dataset.
 	 * @param spanType

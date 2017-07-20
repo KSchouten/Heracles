@@ -5,8 +5,17 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
+/**
+ * The Framework class sets up some application wide static variables and static methods that can be used 
+ * throughout the framework
+ * @author Kim Schouten
+ *
+ */
 public class Framework {
 
+	/**
+	 * Setting up some paths for the framework to use
+	 */
 	public static final String PATH = System.getProperty("user.dir")+"/";
 	public static final String RESOURCES_PATH = PATH+"src/main/resources/";
 	public static final String OUTPUT_PATH = PATH + "output/";
@@ -15,10 +24,9 @@ public class Framework {
 	public static final String RAWDATA_PATH = RESOURCES_PATH + "data/raw/";
 	public static final String LIB_PATH = RESOURCES_PATH + "lib/";
 	
-	
-	public static void main(String[] args) throws Exception{
-
-	}
+	//Debug, error, and log can be used to pipe all system output through one place.
+	//If you every decide you need to send your output somewhere else, you can simply
+	//update these methods.
 	
 	public static void debug(String message){
 		System.out.println(message);
@@ -32,7 +40,9 @@ public class Framework {
 	}
 	
 	/**
-	 * Console output is saved to a file instead of just displayed below. The console box has a limited amount of text it can display, so if you have much data, it makes sense to save it to a file instead. This can also be helpful to keep track of your experiment.
+	 * Console output is saved to a file instead of just displayed below. 
+	 * The console box has a limited amount of text it can display, so if you have much data, 
+	 * it makes sense to save it to a file instead. This can also be helpful to keep track of your experiment.
 	 */
 	public static void fileInsteadOfConsole(){
 		try {

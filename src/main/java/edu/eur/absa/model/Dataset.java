@@ -57,7 +57,8 @@ public class Dataset {
 	 * will be assigned. However, the <code>Algorithm</code> might try to predict the sentiment for each of the "aspect" spans contained within a sentence.
 	 * The boolean useAllData is used to determine whether any leftover Spans will be put in the last subset (when true) or simply left out (when false). Default is true.
 	 * @param spanType
-	 * @param subSetFractions These should sum up to one.
+	 * @param subSetProportions These should sum up to one.
+	 * @return The data split into subsets, put together in a list. Last one in the list is the test set.
 	 */
 	public ArrayList<HashSet<Span>> createSubSets(String spanType, double... subSetProportions){
 		return Dataset.createSubSets(getSpans(spanType), subSetProportions);

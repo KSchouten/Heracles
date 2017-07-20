@@ -16,16 +16,18 @@ public abstract class AbstractNLPComponent {
 	protected boolean overwritePreviousRun = false;
 	
 	/**
-	 * The process() method after validating that this component can actually be run
-	 * @param dataset
-	 * @param spanType
+	 * After process() has determined whether this component can be run, it will call
+	 * validatedProcess(), which should be implemented in each subclass of AbstractNLPComponent.
+	 * This method contains the actual work being done.
+	 * @param dataset The dataset to process
+	 * @param spanType The type of Span this component operates on
 	 */
 	public abstract void validatedProcess(Dataset dataset, String spanType);
 	/**
 	 * This method first checks if this component can be executed, if not then stop. Otherwise, refer to the
 	 * validatedProcess() method of the actual component.
-	 * @param dataset
-	 * @param spanType
+	 * @param dataset The dataset to process
+	 * @param spanType The type of Span this component operates on
 	 */
 	public void process(Dataset dataset, String spanType){
 		//check if task has already been done
@@ -44,10 +46,18 @@ public abstract class AbstractNLPComponent {
 		validatedProcess(dataset, spanType);
 	}
 	
+	/**
+	 * 
+	 * @return The NLPTask this component is performing
+	 */
 	public NLPTask getTask() {
 		return thisTask;
 	}
 
+	/**
+	 * 
+	 * @return The set of NLPTasks that have to be performed already before this component can be used
+	 */
 	public HashSet<NLPTask> getPrerequisiteTasks() {
 		return prerequisites;
 	}
