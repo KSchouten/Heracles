@@ -67,7 +67,7 @@ public class DatasetJSONWriter implements IDataWriter{
 				annJSON.put("id", span.getId());
 				annJSON.put("spanType", span.getType());
 				if (span.size() == 0){
-					Framework.debug("Span without words: (" + span.getId() + ") " + span);
+					Framework.debug("Span without words: (" + span.getId() + ") " + span+"\nTextual Unit: "+span.getTextualUnit());
 				}
 				annJSON.put("firstWordId", span.first().getId());
 				annJSON.put("lastWordId", span.last().getId());

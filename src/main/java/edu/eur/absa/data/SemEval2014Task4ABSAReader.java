@@ -38,6 +38,18 @@ public class SemEval2014Task4ABSAReader implements IDataReader {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception{
+		processAllData();
+		showStatistics((new DatasetJSONReader()).read(new File(Framework.DATA_PATH+"SemEval2014Restaurants-Train.json")));
+		showStatistics((new DatasetJSONReader()).read(new File(Framework.DATA_PATH+"SemEval2014Restaurants-Test.json")));
+	}
+	
+	/**
+	 * This method will process all raw SemEval2014 data. 
+	 * Note that data files are not included in the repository due to licensing and file size.
+	 * 
+	 * @throws Exception
+	 */
+	public static void processAllData() throws Exception {
 		Dataset trainRest = (new SemEval2014Task4ABSAReader()).read(new File(Framework.RAWDATA_PATH + "ABSA-14_Restaurants_Train_Data.xml"));
 		(new DatasetJSONWriter()).write(trainRest, new File(Framework.DATA_PATH+"SemEval2014Restaurants-Train.json"));
 		(new DatasetJSONWriter(true)).write(trainRest, new File(Framework.DATA_PATH+"SemEval2014Restaurants-Train.pretty.json"));
@@ -53,7 +65,6 @@ public class SemEval2014Task4ABSAReader implements IDataReader {
 		Dataset testLapt = (new SemEval2014Task4ABSAReader()).read(new File(Framework.RAWDATA_PATH + "ABSA-14_Laptops_Test_Gold.xml"));
 		(new DatasetJSONWriter()).write(testLapt, new File(Framework.DATA_PATH+"SemEval2014Laptops-Test.json"));
 		(new DatasetJSONWriter(true)).write(testLapt, new File(Framework.DATA_PATH+"SemEval2014Laptops-Test.pretty.json"));
-		
 	}
 	
 	@Override
@@ -62,6 +73,7 @@ public class SemEval2014Task4ABSAReader implements IDataReader {
 		Dataset dataset = new Dataset(file.getName(),"sentence");
 		
 		HashMap<Element, Span> aspectTermElementsWithSentenceSpans = new HashMap<>();
+		HashMap<Element, Span> aspectCategoryElementsWithSentenceSpans = new HashMap<>();
 		
 		Document document = new Builder().build(file);
 		//root is the <sentences> element
@@ -74,27 +86,22 @@ public class SemEval2014Task4ABSAReader implements IDataReader {
 			String text = sentenceElement.getChildElements("text").get(0).getValue();
 			Span sentenceSpan = new Span("sentence", dataset);
 			sentenceSpan.getAnnotations().put("id", sentenceId);
-			sentenceSpan.getAnnotations().put("text", text);
-			boolean hasAspectTerms = sentenceElement.getChildElements("AspectTerms").size()>0;
+			sentenceSpan.getAnnotations().put("text", text.replaceAll("(\\w)(-|/)(\\w)", "$1 $3"));
+			
+			boolean hasAspectTerms = sentenceElement.getChildElements("aspectTerms").size()>0;
 			if (hasAspectTerms){
-				Elements aspectTermElements = sentenceElement.getChildElements("AspectTerms").get(0).getChildElements();
+				Elements aspectTermElements = sentenceElement.getChildElements("aspectTerms").get(0).getChildElements();
 				for (int k = 0; k < aspectTermElements.size(); k++){
 					Element aspectTermElement = aspectTermElements.get(k);
 					aspectTermElementsWithSentenceSpans.put(aspectTermElement, sentenceSpan);
 				}
 			}
-			boolean hasAspectCategories = sentenceElement.getChildElements("AspectCategories").size()>0;
+			boolean hasAspectCategories = sentenceElement.getChildElements("aspectCategories").size()>0;
 			if (hasAspectCategories){
-				Elements aspectCategoryElements = sentenceElement.getChildElements("AspectCategories").get(0).getChildElements();
+				Elements aspectCategoryElements = sentenceElement.getChildElements("aspectCategories").get(0).getChildElements();
 				for (int k = 0; k < aspectCategoryElements.size(); k++){
 					Element aspectCategoryElement = aspectCategoryElements.get(k);
-					
-					String category = aspectCategoryElement.getAttributeValue("category");
-					String polarity = aspectCategoryElement.getAttributeValue("polarity");
-					Span categorySpan = new Span("aspectCategory", sentenceSpan);
-					categorySpan.getAnnotations().put("category", category);
-					categorySpan.getAnnotations().put("polarity", polarity);
-					categorySpan.addAll(sentenceSpan);
+					aspectCategoryElementsWithSentenceSpans.put(aspectCategoryElement, sentenceSpan);
 				}
 			}
 		}
@@ -116,37 +123,45 @@ public class SemEval2014Task4ABSAReader implements IDataReader {
 		for (Element aspectTermElement : aspectTermElementsWithSentenceSpans.keySet()){
 			Span sentenceSpan = aspectTermElementsWithSentenceSpans.get(aspectTermElement);
 			
-			String term = aspectTermElement.getAttributeValue("target");
+			String term = aspectTermElement.getAttributeValue("term");
 			String polarity = aspectTermElement.getAttributeValue("polarity");
 			String from = aspectTermElement.getAttributeValue("from");
 			String to = aspectTermElement.getAttributeValue("to");
 			
-			Span opinionSpan = new Span("aspectTerm", sentenceSpan.getTextualUnit());
-			opinionSpan.getAnnotations().put("polarity", polarity);
+			Span termSpan = new Span("aspectTerm", sentenceSpan.getTextualUnit());
+			termSpan.getAnnotations().put("polarity", polarity);
 			//these are mostly useless after the span has been determined, but
 			// we'll keep them around so we can reconstruct the (annotated) data
 			// in the same format
-			opinionSpan.getAnnotations().put("term", term);
-			opinionSpan.getAnnotations().put("from", from);
-			opinionSpan.getAnnotations().put("to", to);
+			termSpan.getAnnotations().put("term", term);
+			termSpan.getAnnotations().put("from", from);
+			termSpan.getAnnotations().put("to", to);
 
-			int sentenceOffset = sentenceSpan.first().getStartOffset();
-			int opinionStartOffset = sentenceOffset + Integer.parseInt(from);
-			int opinionEndOffset = sentenceOffset + Integer.parseInt(to);
+			int opinionStartOffset = Integer.parseInt(from);
+			int opinionEndOffset = Integer.parseInt(to);
 			for (Word word : sentenceSpan){
 				if (word.getStartOffset() >= opinionStartOffset && word.getEndOffset() <= opinionEndOffset){
-					opinionSpan.add(word);
+					termSpan.add(word);
+				} else if (word.getStartOffset() >= opinionStartOffset && word.getStartOffset() < opinionEndOffset ||
+						word.getEndOffset() > opinionStartOffset && word.getEndOffset() <= opinionEndOffset) {
+					//this part is necessary to include long words where only part of it is annotated
+					// as an aspectTerm
+					termSpan.add(word);
 				}
 			}
 			
-			if (opinionSpan.isEmpty()){
+			if (termSpan.isEmpty()){
+				
+				
+				
 				//adding words failed somehow
-				Framework.debug(opinionSpan.getAnnotations().toString());
+				Framework.debug("No words found to add to AspectTerm");
+				Framework.debug(termSpan.getAnnotations().toString());
 				Framework.debug(opinionStartOffset + "\t" + opinionEndOffset);
 				for (Word word : sentenceSpan){
 					Framework.debug(word.getWord() + "\t" + word.getStartOffset() + "\t" + word.getEndOffset());
 					if (word.getStartOffset() >= opinionStartOffset && word.getEndOffset() <= opinionEndOffset){
-						opinionSpan.add(word);
+						termSpan.add(word);
 					}
 				}
 			}
@@ -154,6 +169,16 @@ public class SemEval2014Task4ABSAReader implements IDataReader {
 			
 			
 		}
+		for (Element aspectCategoryElement : aspectCategoryElementsWithSentenceSpans.keySet()){
+			Span sentenceSpan = aspectCategoryElementsWithSentenceSpans.get(aspectCategoryElement);
+			String category = aspectCategoryElement.getAttributeValue("category");
+			String polarity = aspectCategoryElement.getAttributeValue("polarity");
+			Span categorySpan = new Span("aspectCategory", sentenceSpan);
+			categorySpan.getAnnotations().put("category", category);
+			categorySpan.getAnnotations().put("polarity", polarity);
+			categorySpan.addAll(sentenceSpan);
+		}
+		
 		
 		return dataset;
 	}

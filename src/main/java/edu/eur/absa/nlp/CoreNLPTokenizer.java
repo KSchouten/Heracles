@@ -44,6 +44,7 @@ public class CoreNLPTokenizer extends AbstractNLPComponent{
 		
 		Properties prop1 = new Properties();
 		prop1.setProperty("annotators", "tokenize");
+		//prop1.setProperty("options", "splitHyphenated=true");
 		StanfordCoreNLP pipeline = new StanfordCoreNLP(prop1, false);
 		
 		

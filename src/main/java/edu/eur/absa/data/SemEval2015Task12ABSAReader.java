@@ -41,6 +41,13 @@ public class SemEval2015Task12ABSAReader implements IDataReader {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception{
+		showStatistics((new DatasetJSONReader()).read(new File(Framework.DATA_PATH+"SemEval2016SB1Restaurants-Train.json")));
+
+		showStatistics((new DatasetJSONReader()).read(new File(Framework.DATA_PATH+"SemEval2016SB1Restaurants-Test.json")));
+		
+	}
+	
+	public static void processAllData() throws Exception{
 		Dataset test = (new SemEval2015Task12ABSAReader()).read(new File(Framework.RAWDATA_PATH + "ABSA-15_Restaurants_Test_Gold.xml"));
 		(new DatasetJSONWriter()).write(test, new File(Framework.DATA_PATH+"SemEval2015Restaurants-Test.json"));
 		(new DatasetJSONWriter(true)).write(test, new File(Framework.DATA_PATH+"SemEval2015Restaurants-Test.pretty.json"));
@@ -61,9 +68,6 @@ public class SemEval2015Task12ABSAReader implements IDataReader {
 //		Dataset check = (new DatasetJSONReader()).read(new File(Framework.DATA_PATH+"SemEval2016SB1Restaurants-Training.json"));
 //		(new DatasetJSONWriter(true)).write(check, new File(Framework.DATA_PATH+"Check.json"));
 		
-		showStatistics((new DatasetJSONReader()).read(new File(Framework.DATA_PATH+"SemEval2016SB1Restaurants-Train.json")));
-
-		showStatistics((new DatasetJSONReader()).read(new File(Framework.DATA_PATH+"SemEval2016SB1Restaurants-Test.json")));
 		
 	}
 	
