@@ -16,13 +16,10 @@ import edu.eur.absa.model.Span;
  * @author kim
  *
  */
-public class Prediction {
+public class Prediction extends DataEntity{
 
-	//the predicted annotations
-	private Annotations annotations;
 	//the given annotatable for which annotations are predicted, is null when annotations are for predicted span
 	private DataEntity annotatable;
-	private Dataset dataset;
 	
 	//when doing a span prediction, these are the necessary data
 	private Span parentSpan;
@@ -33,7 +30,6 @@ public class Prediction {
 	public Prediction(DataEntity annotatable){
 		this.annotatable = annotatable;
 		this.dataset = annotatable.getDataset();
-		this.annotations = new Annotations(dataset);
 	}
 	
 	public Prediction(Span parentSpan, String spanType, int firstWordOrder, int lastWordOrder){
@@ -42,13 +38,8 @@ public class Prediction {
 		this.firstWordOrder = firstWordOrder;
 		this.lastWordOrder = lastWordOrder;
 		this.dataset = parentSpan.getDataset();
-		this.annotations = new Annotations(dataset);
 	}
 
-	public Annotations getAnnotations() {
-		return annotations;
-	}
-	
 	public DataEntity getAnnotatable(){
 		return annotatable;
 	}
@@ -76,9 +67,4 @@ public class Prediction {
 		singletonSet.add(this);
 		return singletonSet;
 	}
-
-	public Dataset getDataset() {
-		return dataset;
-	}
-	
 }
