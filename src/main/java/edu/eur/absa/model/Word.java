@@ -25,12 +25,7 @@ public class Word extends DataEntity {
 	private int endOffset = 0;
 	//used to denote the order in a document
 	private int order = 0;
-	private int id;
-	private Span textualUnit;
-	private Dataset dataset;
-	private Annotations annotations = null;
-	private Relations relations = null;
-	
+		
 	private Word(String word, int startOffset, Dataset dataset){
 		this.word = word;
 		this.startOffset = startOffset;
@@ -184,20 +179,7 @@ public class Word extends DataEntity {
 		return 0;
 	}
 
-	@Override
-	public Annotations getAnnotations() {
-		if (annotations == null){
-			annotations =  new Annotations(dataset);
-		}
-		return annotations;
-	}
-	@Override
-	public Relations getRelations() {
-		if (relations == null){
-			relations = new Relations();
-		}
-		return relations;
-	}
+	
 	@Override
 	public String toString(){
 		return word;
@@ -228,10 +210,12 @@ public class Word extends DataEntity {
 	//Convenience methods, since these are often used
 	//Behaviour untested when these annotations are not present
 	public String getLemma(){
-		return getAnnotations().get("lemma", String.class);
+//		return getAnnotations().get("lemma", String.class);
+		return getAnnotation("lemma", String.class);
 	}
 	public String getPOS(){
-		return getAnnotations().get("pos", String.class);
+//		return getAnnotations().get("pos", String.class);
+		return getAnnotation("pos", String.class);
 	}
 	
 }

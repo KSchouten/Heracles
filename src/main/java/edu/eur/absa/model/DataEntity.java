@@ -15,7 +15,7 @@ public abstract class DataEntity implements Comparable<DataEntity> {
 	protected int id;
 	protected Span textualUnit;
 	protected Dataset dataset;
-	protected Annotations annotations = null;
+	protected HashMap<String,Object> annotations = null;
 	protected Relations relations = null;
 	
 	/**
@@ -36,14 +36,13 @@ public abstract class DataEntity implements Comparable<DataEntity> {
 	}
 	
 	/**
-	 * Get the set of annotations belonging to this Span
+	 * Get the set of annotations belonging to this Span. This method is deprecated in favor
+	 * of using the built-in methods in DataEntity to access and update annotations
 	 * @return
 	 */
+	@Deprecated
 	public Annotations getAnnotations() {
-		if (annotations == null){
-			annotations = new Annotations(dataset);
-		}
-		return annotations;
+		return Annotations.createFrom(annotations, dataset);
 	}
 	
 	public int compareTo(DataEntity anotherAnn) {
@@ -80,5 +79,36 @@ public abstract class DataEntity implements Comparable<DataEntity> {
 		} else {
 			return false;
 		}
+	}
+	
+	//Annotations methods
+	
+	@SuppressWarnings("unchecked")
+	public <T> T getAnnotation(String annotationType, Class<T> dataType){
+		Object value = annotations.get(annotationType);
+		if (value == null)
+			return null;
+		if (dataType.isInstance(value)){
+			return (T)value;
+		} else {
+			throw new ClassCastException("The annotation you requested is not of the type you specified");
+		}
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> T getAnnotation(String annotationType){
+		Class<T> classT = (Class<T>) dataset.getAnnotationDataTypes().get(annotationType);
+		return getAnnotation(annotationType, classT);
+	}
+	
+	public String getEntryText(String annotationType){
+		return annotationType+": "+getAnnotation(annotationType).toString();
+	}
+	
+	public Object putAnnotation(String annotationType, Object value){
+		if (!dataset.getAnnotationDataTypes().containsKey(annotationType))
+			dataset.getAnnotationDataTypes().put(annotationType, value.getClass());
+		return annotations.put(annotationType, dataset.getAnnotationDataTypes().get(annotationType).cast(value));
 	}
 }
