@@ -64,6 +64,8 @@ public class SemEval2014Task4ABSAReader implements IDataReader {
 		Dataset testLapt = (new SemEval2014Task4ABSAReader()).read(new File(Framework.RAWDATA_PATH + "ABSA-14_Laptops_Test_Gold.xml"));
 		(new DatasetJSONWriter()).write(testLapt, new File(Framework.DATA_PATH+"SemEval2014Laptops-Test.json"));
 		(new DatasetJSONWriter(true)).write(testLapt, new File(Framework.DATA_PATH+"SemEval2014Laptops-Test.pretty.json"));
+
+		
 	}
 	
 	@Override
@@ -175,6 +177,11 @@ public class SemEval2014Task4ABSAReader implements IDataReader {
 			Span categorySpan = new Span("aspectCategory", sentenceSpan);
 			categorySpan.putAnnotation("category", category);
 			categorySpan.putAnnotation("polarity", polarity);
+			//also record an augmented category field where we omit the anecdotes/miscellaneous category
+			// as is done for the icwe2014 paper
+			if (!category.equalsIgnoreCase("anecdotes/miscellaneous")){
+				categorySpan.putAnnotation("category-nomisc", category);
+			}
 			categorySpan.addAll(sentenceSpan);
 		}
 		
@@ -205,6 +212,7 @@ public class SemEval2014Task4ABSAReader implements IDataReader {
 		TreeSet<Span> sentences = dataset.getSpans("sentence");
 		HashMap<Integer, Integer> termsPerSentence = new HashMap<>();
 		HashMap<Integer, Integer> categoriesPerSentence = new HashMap<>();
+		
 		int deviatingTermOpinions = 0;
 		int deviatingCategoryOpinions = 0;
 		for (Span sentence : sentences){
