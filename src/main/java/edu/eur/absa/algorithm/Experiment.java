@@ -161,7 +161,7 @@ public class Experiment {
 		for (AbstractAlgorithm alg : algs){
 			boolean preprocessed = false;
 			for (ArrayList<HashSet<Span>> subsets : multipleDataSubSets){
-				alg.setDataSubSets(subsets);
+				alg.setDataSubSets(subsets, dataset);
 				if (!preprocessed){
 					alg.preprocess();
 					preprocessed = true;

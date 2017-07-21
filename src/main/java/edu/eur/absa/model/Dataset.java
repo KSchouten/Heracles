@@ -203,6 +203,19 @@ public class Dataset {
 		return spansWithWord;
 	}
 	
+	public HashSet<Span> getSubSpans(HashSet<Span> originalData, String subSpanType){
+		HashSet<Span> subSpanData = new HashSet<Span>();
+
+		for (Span span : originalData){
+			subSpanData.addAll(
+					span.getCoveredSpans(
+							getSpans(span.getTextualUnit(), subSpanType)
+					)
+			);
+		}
+		return subSpanData;
+	}
+	
 	/**
 	 * 
 	 * @param relationType

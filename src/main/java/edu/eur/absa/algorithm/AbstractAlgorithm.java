@@ -38,7 +38,7 @@ public abstract class AbstractAlgorithm {
 	 * Features to cache, this is useful in e.g. cross-validation where an algorithm is run
 	 * multiple times. Caching the textual features is a good time saver.
 	 */
-	protected HashMap<DataEntity, HashSet<String>> features = new HashMap<>();
+	protected HashMap<? extends DataEntity, HashSet<String>> features = new HashMap<>();
 	/**
 	 * the training, validation, test splits of the data
 	 */
@@ -62,15 +62,38 @@ public abstract class AbstractAlgorithm {
 	 * The Span type which is used to divide the dataset for this algorithm
 	 */
 	protected String unitOfAnalysisSpanType;
-	
 	/**
-	 * Every new Algorithm should at least specify a label and the unit of analysis
+	 * The Span which is the target for this algorithm. The training and test set should be sets of Spans of 
+	 * this spanType.
+	 */
+	protected String targetSpanType;
+	/**
+	 * A reference to the dataset
+	 */
+	protected Dataset dataset;
+	/**
+	 * Every new Algorithm should at least specify a label and the unit of analysis. 
+	 * By default, the targetSpanType is the same as the unitOfAnalysisSpanType
 	 * @param label A descriptive label for this algorithm which is used in printing the output.
 	 * @param unitOfAnalysisSpanType The Span type which is used to divide the dataset for this algorithm
 	 */
 	public AbstractAlgorithm(String label, String unitOfAnalysisSpanType) {
+		this(label,unitOfAnalysisSpanType,unitOfAnalysisSpanType);
+	}
+	/**
+	 * Constructor that allows targetSpanType to be different than unitOfAnalysisSpanType.
+	 * The latter is used to split the dataset into training/test/etc.
+	 * While the former is used to actually test against when evaluating.
+	 * For instance, you can split the data by review, but since you want to evaluate whether you
+	 * assigned the right aspectCategory spans to each sentence span, the targetSpanType = "sentence" 
+	 * @param label
+	 * @param unitOfAnalysisSpanType
+	 * @param targetSpanType
+	 */
+	public AbstractAlgorithm(String label, String unitOfAnalysisSpanType, String targetSpanType) {
 		this.label = label;
 		this.unitOfAnalysisSpanType = unitOfAnalysisSpanType;
+		this.targetSpanType = targetSpanType;
 	}
 
 	/**
@@ -88,12 +111,14 @@ public abstract class AbstractAlgorithm {
 	 * A method to set the data subsets (e.g., training, validation, test set) for this Algorithm
 	 * @param dataSubSets The data subsets for training, validation, testing, etc.
 	 */
-	public void setDataSubSets(ArrayList<HashSet<Span>> dataSubSets){
+	public void setDataSubSets(ArrayList<HashSet<Span>> dataSubSets, Dataset dataset){
+		this.dataset = dataset;
 		this.dataSubSets = dataSubSets;
 		testAnnotatables.clear();
-		for (Span s : getTestData()){
-			testAnnotatables.add(s);
-		}
+		testAnnotatables.addAll(dataset.getSubSpans(getTestData(), this.targetSpanType));
+//		for (Span s : getTestData()){
+//			testAnnotatables.add(s);
+//		}
 	}
 	
 	/**
@@ -210,7 +235,7 @@ public abstract class AbstractAlgorithm {
 	 * Within an Algorithm, it is sometimes necessary to get the actual test set
 	 * @return The test set
 	 */
-	protected HashSet<DataEntity> getTestAnnotatables(){
+	protected HashSet<? extends DataEntity> getTestAnnotatables(){
 		return testAnnotatables;
 	}
 	
