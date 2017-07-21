@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.TreeSet;
 
+import edu.eur.absa.Framework;
 import edu.eur.absa.algorithm.Prediction;
 import edu.eur.absa.evaluation.results.ClassificationResults;
 import edu.eur.absa.evaluation.results.EvaluationResults;
@@ -22,10 +23,17 @@ public class SpanLabelEvaluator implements Evaluator {
 
 	private String spanLabel;
 	private String spanType;
+	private boolean failureAnalysis = false;
 	
 	public SpanLabelEvaluator(String spanType, String spanLabel){
 		this.spanLabel = spanLabel;
 		this.spanType = spanType;
+	}
+	
+	public SpanLabelEvaluator(String spanType, String spanLabel, boolean failureAnalysis){
+		this.spanLabel = spanLabel;
+		this.spanType = spanType;
+		this.failureAnalysis = failureAnalysis;
 	}
 	
 //	public void evaluate(Dataset dataset, HashSet<Prediction> predictions){
@@ -40,20 +48,22 @@ public class SpanLabelEvaluator implements Evaluator {
 //	
 //	}
 	@Override
-	public EvaluationResults evaluate(HashSet<DataEntity> testSet, HashMap<DataEntity, HashSet<Prediction>> predictions,HashMap<DataEntity, HashSet<String>> features){
+	public EvaluationResults evaluate(HashSet<? extends DataEntity> testSet, HashMap<? extends DataEntity, HashSet<Prediction>> predictions,HashMap<? extends DataEntity, HashSet<String>> features){
 		int truePos=0;
 		int falsePos=0;
 		int falseNeg=0;
 		
 		
 		
-		for (DataEntity parentAnnotatable : predictions.keySet()){
+//		for (DataEntity parentAnnotatable : predictions.keySet()){
+		for (DataEntity parentAnnotatable : testSet){
 			Span parentSpan = (Span)parentAnnotatable;
 			Dataset dataset = parentSpan.getDataset();
-			HashSet<Prediction> preds = predictions.get(parentSpan);
+			HashSet<Prediction> preds = predictions.getOrDefault(parentSpan, new HashSet<Prediction>());
 			HashSet<Object> predictedLabels = new HashSet<>();
 			for (Prediction p : preds){
-				predictedLabels.add(p.getAnnotation(spanLabel));
+				if (p.hasAnnotation(spanLabel))
+					predictedLabels.add(p.getAnnotation(spanLabel));
 			}
 			
 			
@@ -64,11 +74,14 @@ public class SpanLabelEvaluator implements Evaluator {
 			
 			HashSet<Object> goldLabels = new HashSet<>();
 			for (Span s : golds){
-				goldLabels.add(s.getAnnotation(spanLabel));
+				if (s.hasAnnotation(spanLabel))
+					goldLabels.add(s.getAnnotation(spanLabel));
 			}
 			
-//			Main.debug("\n"+predictedLabels.toString());
-//			Main.debug(goldLabels.toString());
+			if (failureAnalysis){
+				Framework.debug("\n"+predictedLabels.toString());
+				Framework.debug(goldLabels.toString());
+			}
 			
 			//order is important, do not change without careful thinking
 			HashSet<Object> workingCopy = new HashSet<Object>();

@@ -25,8 +25,8 @@ public class AnnotationValueEvaluator<T extends Number> implements Evaluator {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public EvaluationResults evaluate(HashSet<DataEntity> testSet,
-			HashMap<DataEntity, HashSet<Prediction>> predictions, HashMap<DataEntity, HashSet<String>> features) {
+	public EvaluationResults evaluate(HashSet<? extends DataEntity> testSet,
+			HashMap<? extends DataEntity, HashSet<Prediction>> predictions, HashMap<? extends DataEntity, HashSet<String>> features) {
 
 		ArrayList<T> predictedValues = new ArrayList<T>();
 		ArrayList<T> goldValues = new ArrayList<T>();

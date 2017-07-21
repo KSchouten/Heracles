@@ -41,8 +41,8 @@ public class AnnotationLabelEvaluator implements Evaluator {
 	
 	
 	@Override
-	public EvaluationResults evaluate(HashSet<DataEntity> testSet,
-			HashMap<DataEntity, HashSet<Prediction>> predictions, HashMap<DataEntity, HashSet<String>> features) {
+	public EvaluationResults evaluate(HashSet<? extends DataEntity> testSet,
+			HashMap<? extends DataEntity, HashSet<Prediction>> predictions, HashMap<? extends DataEntity, HashSet<String>> features) {
 		HashMap<String, Integer> truePos = new HashMap<>();
 		HashMap<String, Integer> falsePos = new HashMap<>();
 		HashMap<String, Integer> falseNeg = new HashMap<>();

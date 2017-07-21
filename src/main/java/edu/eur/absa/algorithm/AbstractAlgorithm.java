@@ -144,7 +144,7 @@ public abstract class AbstractAlgorithm {
 	 * @param testAnnotatables The test set to compare the predictions against
 	 * @return An EvaluationResults object that contains the performance of this Algorithm
 	 */
-	protected EvaluationResults evaluate(Evaluator evaluator, HashSet<DataEntity> testAnnotatables){
+	protected EvaluationResults evaluate(Evaluator evaluator, HashSet<? extends DataEntity> testAnnotatables){
 		if (!evaluators.contains(evaluator)){
 			return null;
 		} else {
