@@ -62,7 +62,7 @@ public class RSTDiscourseParser extends AbstractNLPComponent {
 			
 			int i=0;
 			for (Span sentenceSpan : sentenceSpans){		
-				textPerSentence.add(sentenceSpan.getAnnotations().get("text"));
+				textPerSentence.add(sentenceSpan.getAnnotation("text"));
 				sentencesByOrder.put(i, sentenceSpan);
 				i++;
 			}
@@ -133,8 +133,8 @@ public class RSTDiscourseParser extends AbstractNLPComponent {
 		
 		//Apparently, the parser says that all nodes are nuclei, which is obviously a bug somewhere in the library
 		// so tree.kind() is always "Nucleus"
-		rstNode.getAnnotations().put("type", nodeType);
-		rstNode.getAnnotations().put("rawText", text);
+		rstNode.putAnnotation("type", nodeType);
+		rstNode.putAnnotation("rawText", text);
 		
 		if (parentNode != null){
 			//child node, link to parent span (and to nucleus if it is a satellite)
@@ -153,7 +153,7 @@ public class RSTDiscourseParser extends AbstractNLPComponent {
 //					Span satellite = (Span) existingChildren.first().getChild();
 //					Framework.log("New relation:\t"+new Relation(relationLabel, rstNode, satellite));
 //				} else {
-//					rstNode.getAnnotations().put("type", "satellite");
+//					rstNode.putAnnotation("type", "satellite");
 //				}
 //			}
 //			if (relationDirection.equals(RelationDirection.LeftToRight())){
@@ -168,7 +168,7 @@ public class RSTDiscourseParser extends AbstractNLPComponent {
 //				if (!existingChildren.isEmpty()){
 //					Span nucleus = (Span) existingChildren.first().getChild();
 //					Framework.log("New relation:\t"+new Relation(relationLabel, nucleus, rstNode));
-//					rstNode.getAnnotations().put("type", "satellite");
+//					rstNode.putAnnotation("type", "satellite");
 //				} else {
 //					
 //				}
@@ -181,19 +181,19 @@ public class RSTDiscourseParser extends AbstractNLPComponent {
 				//if there is already a childnode under the parent and either that node or the current node
 				//  is a satellite, we can create a sideways, labeled, relation
 				//sideways relations go from the nucleus (parent) to the satellite (child)
-				if (rstNode.getAnnotations().get("type",String.class).equalsIgnoreCase("satellite")){
-					(new Relation("rstRelation", otherNode, rstNode)).getAnnotations().put("type", relationLabel);
+				if (rstNode.getAnnotation("type",String.class).equalsIgnoreCase("satellite")){
+					(new Relation("rstRelation", otherNode, rstNode)).putAnnotation("type", relationLabel);
 				}
-				if(otherNode.getAnnotations().get("type",String.class).equalsIgnoreCase("satellite")){
-					(new Relation("rstRelation", rstNode, otherNode)).getAnnotations().put("type", relationLabel);
+				if(otherNode.getAnnotation("type",String.class).equalsIgnoreCase("satellite")){
+					(new Relation("rstRelation", rstNode, otherNode)).putAnnotation("type", relationLabel);
 				}
 			}
 			
 			
 			//include a relation from the parent node to the child node anyways
-			if (rstNode.getAnnotations().get("type",String.class).equalsIgnoreCase("nucleus")){
+			if (rstNode.getAnnotation("type",String.class).equalsIgnoreCase("nucleus")){
 				new Relation("rstNucleus",parentNode,rstNode);	
-			} else if(rstNode.getAnnotations().get("type",String.class).equalsIgnoreCase("satellite")) {
+			} else if(rstNode.getAnnotation("type",String.class).equalsIgnoreCase("satellite")) {
 				new Relation("rstSatellite",parentNode,rstNode);	
 			} else {
 				System.err.println("Unknown RST node kind");
@@ -202,7 +202,7 @@ public class RSTDiscourseParser extends AbstractNLPComponent {
 			
 		} else {
 			//root node -> link to textual unit span
-			rstNode.getAnnotations().put("type", "root");
+			rstNode.putAnnotation("type", "root");
 		}
 		
 		Framework.log(rstNode.toString());

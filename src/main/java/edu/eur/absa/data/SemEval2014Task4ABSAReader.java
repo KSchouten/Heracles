@@ -2,7 +2,6 @@ package edu.eur.absa.data;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -85,8 +84,8 @@ public class SemEval2014Task4ABSAReader implements IDataReader {
 			String sentenceId = sentenceElement.getAttributeValue("id");
 			String text = sentenceElement.getChildElements("text").get(0).getValue();
 			Span sentenceSpan = new Span("sentence", dataset);
-			sentenceSpan.getAnnotations().put("id", sentenceId);
-			sentenceSpan.getAnnotations().put("text", text.replaceAll("(\\w)(-|/)(\\w)", "$1 $3"));
+			sentenceSpan.putAnnotation("id", sentenceId);
+			sentenceSpan.putAnnotation("text", text.replaceAll("(\\w)(-|/)(\\w)", "$1 $3"));
 			
 			boolean hasAspectTerms = sentenceElement.getChildElements("aspectTerms").size()>0;
 			if (hasAspectTerms){
@@ -129,13 +128,13 @@ public class SemEval2014Task4ABSAReader implements IDataReader {
 			String to = aspectTermElement.getAttributeValue("to");
 			
 			Span termSpan = new Span("aspectTerm", sentenceSpan.getTextualUnit());
-			termSpan.getAnnotations().put("polarity", polarity);
+			termSpan.putAnnotation("polarity", polarity);
 			//these are mostly useless after the span has been determined, but
 			// we'll keep them around so we can reconstruct the (annotated) data
 			// in the same format
-			termSpan.getAnnotations().put("term", term);
-			termSpan.getAnnotations().put("from", from);
-			termSpan.getAnnotations().put("to", to);
+			termSpan.putAnnotation("term", term);
+			termSpan.putAnnotation("from", from);
+			termSpan.putAnnotation("to", to);
 
 			int opinionStartOffset = Integer.parseInt(from);
 			int opinionEndOffset = Integer.parseInt(to);
@@ -156,7 +155,7 @@ public class SemEval2014Task4ABSAReader implements IDataReader {
 				
 				//adding words failed somehow
 				Framework.debug("No words found to add to AspectTerm");
-				Framework.debug(termSpan.getAnnotations().toString());
+				Framework.debug(termSpan.showAnnotations());
 				Framework.debug(opinionStartOffset + "\t" + opinionEndOffset);
 				for (Word word : sentenceSpan){
 					Framework.debug(word.getWord() + "\t" + word.getStartOffset() + "\t" + word.getEndOffset());
@@ -174,8 +173,8 @@ public class SemEval2014Task4ABSAReader implements IDataReader {
 			String category = aspectCategoryElement.getAttributeValue("category");
 			String polarity = aspectCategoryElement.getAttributeValue("polarity");
 			Span categorySpan = new Span("aspectCategory", sentenceSpan);
-			categorySpan.getAnnotations().put("category", category);
-			categorySpan.getAnnotations().put("polarity", polarity);
+			categorySpan.putAnnotation("category", category);
+			categorySpan.putAnnotation("polarity", polarity);
 			categorySpan.addAll(sentenceSpan);
 		}
 		
@@ -192,13 +191,13 @@ public class SemEval2014Task4ABSAReader implements IDataReader {
 		HashMap<String, Integer> sentimentFreqsCategories = new HashMap<>();
 		HashMap<String, Integer> categoryFreqs = new HashMap<>();
 		for (Span aspectTerm : aspectTerms){
-			String sent = aspectTerm.getAnnotations().get("polarity");
+			String sent = aspectTerm.getAnnotation("polarity");
 			sentimentFreqsTerms.put(sent, sentimentFreqsTerms.getOrDefault(sent, 0)+1);
 		}
 		for (Span aspectCategory : aspectCategories){
-			String sent = aspectCategory.getAnnotations().get("polarity");
+			String sent = aspectCategory.getAnnotation("polarity");
 			sentimentFreqsCategories.put(sent, sentimentFreqsCategories.getOrDefault(sent, 0)+1);
-			String cat = aspectCategory.getAnnotations().getEntryText("category");
+			String cat = aspectCategory.getAnnotationEntryText("category");
 			categoryFreqs.put(cat, categoryFreqs.getOrDefault(cat, 0)+1);
 		}	
 		
@@ -215,7 +214,7 @@ public class SemEval2014Task4ABSAReader implements IDataReader {
 			if (!termsInSentence.isEmpty()){
 				HashMap<String, Integer> sentSentFreqs = new HashMap<>();
 				for (Span aspectTerm : termsInSentence){
-					String sent = aspectTerm.getAnnotations().get("polarity");
+					String sent = aspectTerm.getAnnotation("polarity");
 					sentSentFreqs.put(sent, sentSentFreqs.getOrDefault(sent, 0)+1);
 				}
 				TreeMap<Integer, String> sortedPolarities = new TreeMap<>();
@@ -230,7 +229,7 @@ public class SemEval2014Task4ABSAReader implements IDataReader {
 			if (!categoriesInSentence.isEmpty()){
 				HashMap<String, Integer> sentSentFreqs = new HashMap<>();
 				for (Span aspectCategory : categoriesInSentence){
-					String sent = aspectCategory.getAnnotations().get("polarity");
+					String sent = aspectCategory.getAnnotation("polarity");
 					sentSentFreqs.put(sent, sentSentFreqs.getOrDefault(sent, 0)+1);
 				}
 				TreeMap<Integer, String> sortedPolarities = new TreeMap<>();

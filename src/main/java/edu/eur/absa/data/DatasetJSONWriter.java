@@ -92,8 +92,8 @@ public class DatasetJSONWriter implements IDataWriter{
 			if (a == null){
 				Framework.debug("Removed id: "+id);
 			} else {
-				for (String annotationKey : a.getAnnotations().keySet()){
-					annotationsJSON.put(annotationKey, (Object)a.getAnnotations().get(annotationKey));
+				for (String annotationKey : a.getAnnotationTypes()){
+					annotationsJSON.put(annotationKey, (Object)a.getAnnotation(annotationKey));
 					
 				}
 			}

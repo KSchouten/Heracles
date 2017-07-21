@@ -126,7 +126,7 @@ public class CoreNLPSentimentAnnotator extends AbstractNLPComponent {
 				boolean found = false;
 				Span phraseSpan=null;
 				for (Span candidate : candidateSpans){
-					if (candidate.last().equals(end) && candidate.getAnnotations().get("pos").equals(pos)){
+					if (candidate.last().equals(end) && candidate.getAnnotation("pos").equals(pos)){
 						phraseSpan = candidate;
 						assignSentiment(candidate, sm, "phraseSentiment");
 						found =true;
@@ -165,7 +165,7 @@ public class CoreNLPSentimentAnnotator extends AbstractNLPComponent {
 		for (int i = 0; i < 5; i++){
 			sentimentScores.add(sm.get(i, 0));
 		}
-		a.getAnnotations().put(sentimentLabel, sentimentScores);
+		a.putAnnotation(sentimentLabel, sentimentScores);
 	}
 	
 }

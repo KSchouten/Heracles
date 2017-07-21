@@ -5,10 +5,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.TreeMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -152,7 +150,7 @@ public class DatasetJSONReader implements IDataReader {
 		oldIds.put(annJSON.getInt("id"), ann);
 		JSONObject annotationsJSON = annJSON.getJSONObject("annotations");
 		for (String annotationKey : annotationsJSON.keySet()){
-			ann.getAnnotations().put(annotationKey, translateJSONToProperObject(ann.getDataset(), annotationKey, annotationsJSON));
+			ann.putAnnotation(annotationKey, translateJSONToProperObject(ann.getDataset(), annotationKey, annotationsJSON));
 		}
 	}
 	

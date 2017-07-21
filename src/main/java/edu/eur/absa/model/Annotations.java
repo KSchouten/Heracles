@@ -15,6 +15,11 @@ public class Annotations extends HashMap<String, Object>{
 	public Annotations(Dataset dataset){
 		this.dataset = dataset;
 	}
+	@Deprecated
+	public Annotations(HashMap<String, Object> annotations, Dataset dataset){
+		super.putAll(annotations);
+		this.dataset = dataset;
+	}
 	
 	@Deprecated
 	@SuppressWarnings("unchecked")
@@ -50,10 +55,4 @@ public class Annotations extends HashMap<String, Object>{
 		return put(annotationType, dataset.getAnnotationDataTypes().get(annotationType).cast(value));
 	}
 	
-	@Deprecated
-	public static Annotations createFrom(HashMap<String,Object> annotations, Dataset dataset){
-		Annotations ann = (Annotations)annotations;
-		ann.dataset = dataset;
-		return ann;
-	}
 }

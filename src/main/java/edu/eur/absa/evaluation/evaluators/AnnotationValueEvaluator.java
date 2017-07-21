@@ -32,14 +32,14 @@ public class AnnotationValueEvaluator<T extends Number> implements Evaluator {
 		ArrayList<T> goldValues = new ArrayList<T>();
 		
 		for (DataEntity testAnn : testSet){
-			boolean hasGoldValue = testAnn.getAnnotations().containsKey(annotationType);
+			boolean hasGoldValue = testAnn.hasAnnotation(annotationType);
 			
 			if (hasGoldValue){
-				T goldValue = (T) testAnn.getAnnotations().get(annotationType);
+				T goldValue = (T) testAnn.getAnnotation(annotationType);
 				if (predictions.containsKey(testAnn)){
 					HashSet<Prediction> predictionSet = predictions.get(testAnn);
 					Prediction pred = predictionSet.iterator().next();
-					T predictionValue = (T) pred.getAnnotations().get(annotationType);
+					T predictionValue = (T) pred.getAnnotation(annotationType);
 					
 					predictedValues.add(predictionValue);
 					goldValues.add(goldValue);
@@ -67,9 +67,9 @@ public class AnnotationValueEvaluator<T extends Number> implements Evaluator {
 				if (predictions.containsKey(testAnn)){
 					HashSet<Prediction> predictionSet = predictions.get(testAnn);
 					Prediction pred = predictionSet.iterator().next();
-					T predictionValue = (T) pred.getAnnotations().get(annotationType);
+					T predictionValue = (T) pred.getAnnotation(annotationType);
 				
-					testAnn.getAnnotations().put("predicted-"+annotationType, predictionValue);
+					testAnn.putAnnotation("predicted-"+annotationType, predictionValue);
 				}
 			}
 			

@@ -84,10 +84,10 @@ public class CoreNLPPosTagger extends AbstractNLPComponent{
 					
 					Word w = wordIndex.get(token.get(CharacterOffsetBeginAnnotation.class));
 					String tempPos = token.get(PartOfSpeechAnnotation.class);
-					if (w.getAnnotations().containsKey("URI")){
-						w.getAnnotations().put("pos", "NNP");
+					if (w.hasAnnotation("URI")){
+						w.putAnnotation("pos", "NNP");
 					} else {
-						w.getAnnotations().put("pos", tempPos);
+						w.putAnnotation("pos", tempPos);
 					}
 //					System.out.println(w.getAnnotations());
 				}

@@ -71,9 +71,9 @@ public class CoreNLPNamedEntityRecognizer extends AbstractNLPComponent{
 					String ner = token.get(NamedEntityTagAnnotation.class);
 					String nerValue = token.get(NormalizedNamedEntityTagAnnotation.class);
 					if (ner!=null)
-						w.getAnnotations().put("nerLabel", ner);
+						w.putAnnotation("nerLabel", ner);
 					if (nerValue!=null)
-						w.getAnnotations().put("nerValue", nerValue);
+						w.putAnnotation("nerValue", nerValue);
 					
 //					System.out.println(w.getAnnotations());
 				}

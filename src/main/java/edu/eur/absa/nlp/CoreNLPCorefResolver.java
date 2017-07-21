@@ -63,10 +63,10 @@ public class CoreNLPCorefResolver extends AbstractNLPComponent {
 //				reviewTextCorrected += " " + sentence.getAnnotations().get("text");
 //			}
 //			reviewTextCorrected = reviewTextCorrected.trim().replaceAll("  "," ");
-			Framework.log(span.getAnnotations().get("text"));
+			Framework.log(span.getAnnotation("text"));
 			
 			HashMap<Integer, Word> wordIndex = new HashMap<>();
-			Annotation a = new Annotation(span.getAnnotations().get("text", String.class));
+			Annotation a = new Annotation(span.getAnnotation("text", String.class));
 //			Annotation a = CoreNLPHelper.reconstructStanfordAnnotations(span, wordIndex);
 			
 			pipeline.annotate(a);

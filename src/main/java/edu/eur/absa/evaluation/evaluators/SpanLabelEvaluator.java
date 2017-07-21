@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.TreeSet;
 
 import edu.eur.absa.algorithm.Prediction;
-import edu.eur.absa.Framework;
 import edu.eur.absa.evaluation.results.ClassificationResults;
 import edu.eur.absa.evaluation.results.EvaluationResults;
 import edu.eur.absa.model.DataEntity;
@@ -54,7 +53,7 @@ public class SpanLabelEvaluator implements Evaluator {
 			HashSet<Prediction> preds = predictions.get(parentSpan);
 			HashSet<Object> predictedLabels = new HashSet<>();
 			for (Prediction p : preds){
-				predictedLabels.add(p.getAnnotations().get(spanLabel));
+				predictedLabels.add(p.getAnnotation(spanLabel));
 			}
 			
 			
@@ -65,7 +64,7 @@ public class SpanLabelEvaluator implements Evaluator {
 			
 			HashSet<Object> goldLabels = new HashSet<>();
 			for (Span s : golds){
-				goldLabels.add(s.getAnnotations().get(spanLabel));
+				goldLabels.add(s.getAnnotation(spanLabel));
 			}
 			
 //			Main.debug("\n"+predictedLabels.toString());

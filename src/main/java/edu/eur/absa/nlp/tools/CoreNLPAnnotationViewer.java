@@ -45,7 +45,7 @@ public class CoreNLPAnnotationViewer extends AbstractNLPComponent {
 			
 			HashMap<Integer, Word> wordIndex = new HashMap<>();
 //			Annotation a = CoreNLPHelper.reconstructStanfordAnnotations(span, wordIndex);
-			Annotation a = new Annotation((String)span.getAnnotations().get("text"));
+			Annotation a = new Annotation((String)span.getAnnotation("text"));
 			
 			Framework.debug(span.toString());
 			

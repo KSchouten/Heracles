@@ -3,7 +3,6 @@ package edu.eur.absa.model;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.SortedSet;
@@ -11,7 +10,6 @@ import java.util.TreeSet;
 
 import org.json.JSONObject;
 
-import edu.eur.absa.Framework;
 import edu.eur.absa.model.exceptions.IllegalSpanException;
 
 /**
@@ -26,8 +24,6 @@ public class Span extends DataEntity implements NavigableSet<Word> {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 7183874060526460120L;
-	
 	private String spanType;
 	
 	private TreeSet<Word> words = new TreeSet<>();
@@ -131,11 +127,6 @@ public class Span extends DataEntity implements NavigableSet<Word> {
 		return words.remove(w);
 	}
 
-	
-	@Deprecated
-	public NavigableSet<Word> descendingSet(){
-		return ((TreeSet<Word>)words.clone()).descendingSet();
-	}
 	
 	public Word first(){
 		return words.first();
@@ -287,8 +278,8 @@ public class Span extends DataEntity implements NavigableSet<Word> {
 		}
 		JSONObject annotationsJSON = new JSONObject();
 		spanJSON.put("annotations", annotationsJSON);
-		for (String annotationKey : getAnnotations().keySet()){
-			annotationsJSON.put(annotationKey, (Object)getAnnotations().get(annotationKey));
+		for (String annotationKey : annotations.keySet()){
+			annotationsJSON.put(annotationKey, (Object)getAnnotation(annotationKey));
 		}
 		return spanJSON.toString();
 	}
@@ -384,6 +375,12 @@ public class Span extends DataEntity implements NavigableSet<Word> {
 	@Override
 	public Iterator<Word> descendingIterator() {
 		return words.descendingIterator();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public NavigableSet<Word> descendingSet(){
+		return ((TreeSet<Word>)words.clone()).descendingSet();
 	}
 
 	@Override

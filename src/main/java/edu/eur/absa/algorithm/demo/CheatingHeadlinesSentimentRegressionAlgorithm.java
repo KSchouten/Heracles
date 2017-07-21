@@ -45,7 +45,7 @@ public class CheatingHeadlinesSentimentRegressionAlgorithm extends
 			Prediction p = new Prediction(a);
 			double random = (2*r.nextDouble())-1;
 			double randomSmall = (r.nextDouble())-0.5;
-			p.getAnnotations().put("sentiment",((Double)a.getAnnotations().get("sentiment")).doubleValue()+random);
+			p.putAnnotation("sentiment",((Double)a.getAnnotation("sentiment")).doubleValue()+random);
 //			p.getAnnotations().put("sentiment",random);
 //			p.getAnnotations().put("sentiment",0.000001);
 			

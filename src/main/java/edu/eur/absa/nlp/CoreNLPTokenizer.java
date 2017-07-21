@@ -50,7 +50,7 @@ public class CoreNLPTokenizer extends AbstractNLPComponent{
 		
 		for (Span span : dataset.getSpans(spanTypeOfTextUnit)){
 			Span textualUnit = span.getTextualUnit();
-			String originalText = span.getAnnotations().get("text", String.class); 
+			String originalText = span.getAnnotation("text", String.class); 
 			Annotation a = new Annotation(originalText);
 			pipeline.annotate(a);
 			List<CoreLabel> tokenAnnotations = a.get(TokensAnnotation.class);

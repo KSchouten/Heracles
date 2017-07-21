@@ -102,9 +102,9 @@ public class CoreNLPParser extends AbstractNLPComponent {
 			Word end = wordIndex.get( stanfordWords.get(stanfordWords.size()-1).beginPosition() );
 			
 			Span span = new Span("syntacticPhrase", begin, end);
-			span.getAnnotations().put("pos", t.label().toString());
+			span.putAnnotation("pos", t.label().toString());
 			
-			String fullText = (String)parent.getTextualUnit().getAnnotations().get("text");
+			String fullText = (String)parent.getTextualUnit().getAnnotation("text");
 			if (end.getEndOffset()>fullText.length()){
 				Framework.debug(fullText.length() + "\t" + fullText);
 				Framework.debug(begin.getWord() + "\t" + begin.getStartOffset() + "\t" + end.getWord() + "\t" + end.getEndOffset());
@@ -112,7 +112,7 @@ public class CoreNLPParser extends AbstractNLPComponent {
 				
 			}
 			String spanText = fullText.substring(begin.getStartOffset(), end.getEndOffset());
-			span.getAnnotations().put("text", spanText);
+			span.putAnnotation("text", spanText);
 			
 			Word syntacticHead = wordIndex.get( headLeaf.yieldWords().get(0).beginPosition());
 			

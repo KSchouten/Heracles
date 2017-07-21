@@ -18,7 +18,7 @@ public class LowercaseChanger extends AbstractNLPComponent {
 		for (Span span : dataset.getSpans(spanType)){
 			for (Word w : span){
 				
-				if (!w.getAnnotations().containsKey("URI"))
+				if (!w.hasAnnotation("URI"))
 					w.setWord(w.getWord().toLowerCase());
 			}
 		}

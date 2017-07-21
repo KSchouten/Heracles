@@ -86,7 +86,7 @@ public class SemEval2015Task12ABSAReader implements IDataReader {
 			Element reviewElement = reviewElements.get(i);
 			String reviewId = reviewElement.getAttributeValue("rid");
 			Span reviewSpan = new Span("review", dataset);
-			reviewSpan.getAnnotations().put("id", reviewId);
+			reviewSpan.putAnnotation("id", reviewId);
 			String reviewText = "";
 			Elements sentenceElements = reviewElement.getChildElements("sentences").get(0).getChildElements();
 			for (int j = 0; j < sentenceElements.size(); j++){
@@ -94,8 +94,8 @@ public class SemEval2015Task12ABSAReader implements IDataReader {
 				String sentenceId = sentenceElement.getAttributeValue("id");
 				String text = sentenceElement.getChildElements("text").get(0).getValue();
 				Span sentenceSpan = new Span("sentence", reviewSpan);
-				sentenceSpan.getAnnotations().put("id", sentenceId);
-				sentenceSpan.getAnnotations().put("text", text);
+				sentenceSpan.putAnnotation("id", sentenceId);
+				sentenceSpan.putAnnotation("text", text);
 				reviewText += text;
 				boolean hasOpinions = sentenceElement.getChildElements("Opinions").size()>0;
 				if (hasOpinions){
@@ -106,7 +106,7 @@ public class SemEval2015Task12ABSAReader implements IDataReader {
 					}
 				}
 			}
-			reviewSpan.getAnnotations().put("text", reviewText);
+			reviewSpan.putAnnotation("text", reviewText);
 		}
 		dataset.getPerformedNLPTasks().add(NLPTask.SENTENCE_SPLITTING);
 		dataset.process(new CoreNLPTokenizer(), "sentence")
@@ -133,15 +133,15 @@ public class SemEval2015Task12ABSAReader implements IDataReader {
 			String to = opinionElement.getAttributeValue("to");
 			
 			Span opinionSpan = new Span("opinion", sentenceSpan.getTextualUnit());
-			opinionSpan.getAnnotations().put("category", category);
-			opinionSpan.getAnnotations().put("polarity", polarity);
+			opinionSpan.putAnnotation("category", category);
+			opinionSpan.putAnnotation("polarity", polarity);
 			if (!target.equalsIgnoreCase("NULL")){
 				//these are mostly useless after the span has been determined, but
 				// we'll keep them around so we can reconstruct the (annotated) data
 				// in the same format
-				opinionSpan.getAnnotations().put("target", target);
-				opinionSpan.getAnnotations().put("from", from);
-				opinionSpan.getAnnotations().put("to", to);
+				opinionSpan.putAnnotation("target", target);
+				opinionSpan.putAnnotation("from", from);
+				opinionSpan.putAnnotation("to", to);
 
 				int sentenceOffset = sentenceSpan.first().getStartOffset();
 				int opinionStartOffset = sentenceOffset + Integer.parseInt(from);
@@ -154,7 +154,7 @@ public class SemEval2015Task12ABSAReader implements IDataReader {
 				
 				if (opinionSpan.isEmpty()){
 					//adding words failed somehow
-					Framework.debug(opinionSpan.getAnnotations().toString());
+					Framework.debug(opinionSpan.showAnnotations());
 					Framework.debug(opinionStartOffset + "\t" + opinionEndOffset);
 					for (Word word : sentenceSpan){
 						Framework.debug(word.getWord() + "\t" + word.getStartOffset() + "\t" + word.getEndOffset());
@@ -180,9 +180,9 @@ public class SemEval2015Task12ABSAReader implements IDataReader {
 		HashMap<String, Integer> sentimentFreqs = new HashMap<>();
 		HashMap<String, Integer> categoryFreqs = new HashMap<>();
 		for (Span opinion : opinions){
-			String sent = opinion.getAnnotations().get("polarity");
+			String sent = opinion.getAnnotation("polarity");
 			sentimentFreqs.put(sent, sentimentFreqs.getOrDefault(sent, 0)+1);
-			String cat = opinion.getAnnotations().getEntryText("category");
+			String cat = opinion.getAnnotationEntryText("category");
 			categoryFreqs.put(cat, categoryFreqs.getOrDefault(cat, 0)+1);
 		}
 		
@@ -195,7 +195,7 @@ public class SemEval2015Task12ABSAReader implements IDataReader {
 			if (!opinionsInSentence.isEmpty()){
 				HashMap<String, Integer> sentSentFreqs = new HashMap<>();
 				for (Span opinion : opinionsInSentence){
-					String sent = opinion.getAnnotations().get("polarity");
+					String sent = opinion.getAnnotation("polarity");
 					sentSentFreqs.put(sent, sentSentFreqs.getOrDefault(sent, 0)+1);
 				}
 				TreeMap<Integer, String> sortedPolarities = new TreeMap<>();
@@ -216,7 +216,7 @@ public class SemEval2015Task12ABSAReader implements IDataReader {
 			if (!opinionsInReview.isEmpty()){
 				HashMap<String, Integer> sentSentFreqs = new HashMap<>();
 				for (Span opinion : opinionsInReview){
-					String sent = opinion.getAnnotations().get("polarity");
+					String sent = opinion.getAnnotation("polarity");
 					sentSentFreqs.put(sent, sentSentFreqs.getOrDefault(sent, 0)+1);
 				}
 				TreeMap<Integer, String> sortedPolarities = new TreeMap<>();

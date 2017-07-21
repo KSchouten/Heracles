@@ -39,7 +39,7 @@ public class CheatingAspectPolarityClassificationAlgorithm extends AbstractAlgor
 	public void predict() {
 		for (DataEntity a : getTestAnnotatables()){
 			Prediction p = new Prediction(a);
-			p.getAnnotations().put("polarity",a.getAnnotations().get("polarity"));
+			p.putAnnotation("polarity",a.getAnnotation("polarity"));
 			
 			if (!predictions.containsKey(a))
 				predictions.put(a, new HashSet<Prediction>());

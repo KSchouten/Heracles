@@ -1,7 +1,7 @@
 package edu.eur.absa.model;
 
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Set;
 
 /**
  * To be implemented by anything that can have annotations. For instance, <code>Word</code>, <code>Span</code>, and 
@@ -15,7 +15,7 @@ public abstract class DataEntity implements Comparable<DataEntity> {
 	protected int id;
 	protected Span textualUnit;
 	protected Dataset dataset;
-	protected HashMap<String,Object> annotations = null;
+	protected HashMap<String,Object> annotations = new HashMap<>();
 	protected Relations relations = null;
 	
 	/**
@@ -42,7 +42,11 @@ public abstract class DataEntity implements Comparable<DataEntity> {
 	 */
 	@Deprecated
 	public Annotations getAnnotations() {
-		return Annotations.createFrom(annotations, dataset);
+		return new Annotations(annotations, dataset);
+	}
+	
+	public String showAnnotations(){
+		return annotations.toString();
 	}
 	
 	public int compareTo(DataEntity anotherAnn) {
@@ -102,7 +106,7 @@ public abstract class DataEntity implements Comparable<DataEntity> {
 		return getAnnotation(annotationType, classT);
 	}
 	
-	public String getEntryText(String annotationType){
+	public String getAnnotationEntryText(String annotationType){
 		return annotationType+": "+getAnnotation(annotationType).toString();
 	}
 	
@@ -110,5 +114,13 @@ public abstract class DataEntity implements Comparable<DataEntity> {
 		if (!dataset.getAnnotationDataTypes().containsKey(annotationType))
 			dataset.getAnnotationDataTypes().put(annotationType, value.getClass());
 		return annotations.put(annotationType, dataset.getAnnotationDataTypes().get(annotationType).cast(value));
+	}
+	
+	public boolean hasAnnotation(String annotationType){
+		return annotations.containsKey(annotationType);
+	}
+	
+	public Set<String> getAnnotationTypes(){
+		return annotations.keySet();
 	}
 }

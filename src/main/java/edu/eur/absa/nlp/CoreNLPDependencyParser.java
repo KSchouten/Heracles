@@ -72,11 +72,11 @@ public class CoreNLPDependencyParser extends AbstractNLPComponent {
 						Framework.debug(wordIndex.toString());
 					}
 					Relation rel = new Relation("deps", gov, dep);
-					rel.getAnnotations().put("relationLongName", td.reln().getLongName());
+					rel.putAnnotation("relationLongName", td.reln().getLongName());
 					if (td.reln().getParent() != null)
-						rel.getAnnotations().put("relationParentShortName", td.reln().getParent().getShortName());
-					rel.getAnnotations().put("relationShortName", td.reln().getShortName());
-//					rel.getAnnotations().put("relationSpecific", td.reln().getSpecific());
+						rel.putAnnotation("relationParentShortName", td.reln().getParent().getShortName());
+					rel.putAnnotation("relationShortName", td.reln().getShortName());
+//					rel.putAnnotation("relationSpecific", td.reln().getSpecific());
 					dep.getRelations().addRelationToParent(rel);
 					gov.getRelations().addRelationToChild(rel);
 					

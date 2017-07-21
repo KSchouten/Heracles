@@ -1,9 +1,5 @@
 package edu.eur.absa.model;
 
-import java.util.Collection;
-
-import edu.eur.absa.model.exceptions.IllegalComparisonException;
-
 /**
  * A Word is the atomic unit of a <code>Document</code>. It contains only the most basic information about a word: 
  * its original textual representation, its order within the <code>Document</code>, including links to the previous and next <code>Word</code>s,

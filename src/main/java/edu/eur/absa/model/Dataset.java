@@ -31,9 +31,9 @@ public class Dataset {
 	
 	
 	
-	private HashMap<String, HashSet<Relation>> spanRelationsByType = new HashMap<>();
-	private HashMap<Span, HashSet<Relation>> spanRelationsByParent = new HashMap<>();
-	private HashMap<Span, HashSet<Relation>> spanRelationsByChild = new HashMap<>();
+//	private HashMap<String, HashSet<Relation>> spanRelationsByType = new HashMap<>();
+//	private HashMap<Span, HashSet<Relation>> spanRelationsByParent = new HashMap<>();
+//	private HashMap<Span, HashSet<Relation>> spanRelationsByChild = new HashMap<>();
 	
 	private HashSet<NLPTask> performedNLPTasks = new HashSet<>();
 	private String textualUnitSpanType;

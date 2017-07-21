@@ -67,7 +67,7 @@ public class CoreNLPLemmatizer extends AbstractNLPComponent{
 					
 					Word w = wordIndex.get(token.get(CharacterOffsetBeginAnnotation.class));
 					String tempLemma = token.get(LemmaAnnotation.class);
-					w.getAnnotations().put("lemma", tempLemma.toLowerCase());
+					w.putAnnotation("lemma", tempLemma.toLowerCase());
 //					System.out.println(w.getAnnotations());
 				}
 			

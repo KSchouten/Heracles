@@ -61,7 +61,7 @@ public class AnnotationLabelEvaluator implements Evaluator {
 			}
 			
 			for (Span span : analysisSpans){
-				boolean annotated = span.getAnnotations().containsKey(annotationType);
+				boolean annotated = span.hasAnnotation(annotationType);
 				String group = "";
 				
 					
@@ -71,9 +71,9 @@ public class AnnotationLabelEvaluator implements Evaluator {
 					//only a single prediction is performed for this type of problem
 					
 					Prediction singlePrediction = preds.iterator().next();
-					boolean predicted = singlePrediction.getAnnotations().containsKey(annotationType); 
+					boolean predicted = singlePrediction.hasAnnotation(annotationType); 
 					if (groupBy){
-						group = singlePrediction.getAnnotations().get("group");
+						group = singlePrediction.getAnnotation("group");
 					}
 					
 //					Framework.debug("Prediction found..."+singlePrediction.getAnnotations());
@@ -81,8 +81,8 @@ public class AnnotationLabelEvaluator implements Evaluator {
 					boolean triggerFailureAnalysis = true;
 					if (predicted && annotated){
 						//check the values
-						Object predObj = singlePrediction.getAnnotations().get(annotationType);
-						Object annotObj = span.getAnnotations().get(annotationType);
+						Object predObj = singlePrediction.getAnnotation(annotationType);
+						Object annotObj = span.getAnnotation(annotationType);
 						if (predObj.equals(annotObj)){
 							truePos.put(group, truePos.getOrDefault(group,0)+1);
 							if (groupBy)
@@ -111,9 +111,9 @@ public class AnnotationLabelEvaluator implements Evaluator {
 					}
 					
 					if (failureAnalysis && triggerFailureAnalysis){
-						Framework.log("Predicted: "+singlePrediction.getAnnotations().get(annotationType));
-						Framework.log("Gold: "+span.getAnnotations().get(annotationType));
-						Framework.log(span.getTextualUnit().getAnnotations().get("text"));
+						Framework.log("Predicted: "+singlePrediction.getAnnotation(annotationType));
+						Framework.log("Gold: "+span.getAnnotation(annotationType));
+						Framework.log(span.getTextualUnit().getAnnotation("text"));
 						Framework.log(""+span.getTextualUnit());
 						
 						Span sentence = span.getTextualUnit().getCoveredSpans(span.getDataset().getSpans("sentence", span.first())).first();

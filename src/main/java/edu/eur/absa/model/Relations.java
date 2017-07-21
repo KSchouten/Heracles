@@ -1,7 +1,6 @@
 package edu.eur.absa.model;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.TreeSet;
 
 /**
@@ -64,7 +63,7 @@ public class Relations {
 
 		for (Relation rel : relations){
 			for (String allowedAnnValue : allowedAnnotationValues){
-				if (rel.getAnnotations().get(annotationType).equals(allowedAnnValue)){
+				if (rel.getAnnotation(annotationType).equals(allowedAnnValue)){
 					//match
 					returnSet.add(rel);
 				}

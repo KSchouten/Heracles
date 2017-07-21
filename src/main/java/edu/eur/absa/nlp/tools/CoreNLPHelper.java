@@ -38,7 +38,7 @@ public class CoreNLPHelper {
 		return reconstructStanfordAnnotations(sentenceSpan, wordIndex, false);
 	}
 	public static Annotation reconstructStanfordAnnotations(Span sentenceSpan, HashMap<Integer, Word> wordIndex, boolean useWordOrderInsteadOfOffset){
-		String originalText = sentenceSpan.getAnnotations().get("text", String.class); 
+		String originalText = sentenceSpan.getAnnotation("text", String.class); 
 		Annotation a = new Annotation(originalText);
 		a.set(TextAnnotation.class, originalText);
 		
@@ -72,17 +72,17 @@ public class CoreNLPHelper {
 			c.set(DocIDAnnotation.class, "document");
 			c.setDocID("document");
 			
-			if (w.getAnnotations().containsKey("pos"))
-				c.set(PartOfSpeechAnnotation.class, w.getAnnotations().get("pos",String.class));
+			if (w.hasAnnotation("pos"))
+				c.set(PartOfSpeechAnnotation.class, w.getAnnotation("pos",String.class));
 			
-			if (w.getAnnotations().containsKey("lemma"))
-				c.set(LemmaAnnotation.class, w.getAnnotations().get("lemma", String.class));
+			if (w.hasAnnotation("lemma"))
+				c.set(LemmaAnnotation.class, w.getAnnotation("lemma", String.class));
 			
-			if (w.getAnnotations().containsKey("nerLabel"))
-				c.set(NamedEntityTagAnnotation.class, w.getAnnotations().get("nerLabel", String.class));
+			if (w.hasAnnotation("nerLabel"))
+				c.set(NamedEntityTagAnnotation.class, w.getAnnotation("nerLabel", String.class));
 			
-			if (w.getAnnotations().containsKey("nerValue"))
-				c.set(NormalizedNamedEntityTagAnnotation.class, w.getAnnotations().get("nerValue", String.class));
+			if (w.hasAnnotation("nerValue"))
+				c.set(NormalizedNamedEntityTagAnnotation.class, w.getAnnotation("nerValue", String.class));
 			
 			tokenAnnotations.add(c);
 			if (useWordOrderInsteadOfOffset){

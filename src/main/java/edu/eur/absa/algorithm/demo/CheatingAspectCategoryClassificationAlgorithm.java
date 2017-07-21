@@ -51,10 +51,10 @@ public class CheatingAspectCategoryClassificationAlgorithm extends AbstractAlgor
 				if (!predictions.containsKey(sentenceSpan))
 					predictions.put(sentenceSpan, new HashSet<Prediction>());
 				
-				Object goldLabelValue = opinionSpan.getAnnotations().get("category");
+				Object goldLabelValue = opinionSpan.getAnnotation("category");
 				if (!assignedLabels.contains(goldLabelValue)){
 					Prediction p = new Prediction(sentenceSpan, "opinion", sentenceSpan.first().getOrder(), sentenceSpan.last().getOrder());
-					p.getAnnotations().put("category", goldLabelValue);
+					p.putAnnotation("category", goldLabelValue);
 					predictions.get(sentenceSpan).add(p);
 					assignedLabels.add(goldLabelValue);
 //					Main.debug("Assigned: "+goldLabelValue);
