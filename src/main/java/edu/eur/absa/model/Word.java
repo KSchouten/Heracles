@@ -129,20 +129,30 @@ public class Word extends DataEntity {
 		return id;
 	}
 	
-	@Override
-	public boolean equals(Object anotherObject){
-		if (anotherObject instanceof Word){
-			Word anotherWord = (Word)anotherObject;
-			if (this.getTextualUnit().hashCode() == anotherWord.getTextualUnit().hashCode() &&
-					this.getOrder() == anotherWord.getOrder()){
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
-		}
-	}
+//	@Override
+//	public boolean equals(Object anotherObject){
+//		if (anotherObject instanceof Word){
+//			return this.id == ((Word)anotherObject).id;
+//		
+//		} else {
+//			return false;
+//		}
+//	}
+	
+//	@Override
+//	public boolean equals(Object anotherObject){
+//		if (anotherObject instanceof Word){
+//			Word anotherWord = (Word)anotherObject;
+//			if (this.getTextualUnit().hashCode() == anotherWord.getTextualUnit().hashCode() &&
+//					this.getOrder() == anotherWord.getOrder()){
+//				return true;
+//			} else {
+//				return false;
+//			}
+//		} else {
+//			return false;
+//		}
+//	}
 	
 //	@Override
 //	public int compareTo(Annotatable anotherWord) {

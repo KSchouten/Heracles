@@ -38,8 +38,8 @@ public class SemEval2014Task4ABSAReader implements IDataReader {
 	 */
 	public static void main(String[] args) throws Exception{
 		processAllData();
-		showStatistics((new DatasetJSONReader()).read(new File(Framework.DATA_PATH+"SemEval2014Restaurants-Train.json")));
-		showStatistics((new DatasetJSONReader()).read(new File(Framework.DATA_PATH+"SemEval2014Restaurants-Test.json")));
+//		showStatistics((new DatasetJSONReader()).read(new File(Framework.DATA_PATH+"SemEval2014Restaurants-Train.json")));
+//		showStatistics((new DatasetJSONReader()).read(new File(Framework.DATA_PATH+"SemEval2014Restaurants-Test.json")));
 	}
 	
 	/**
@@ -49,6 +49,11 @@ public class SemEval2014Task4ABSAReader implements IDataReader {
 	 * @throws Exception
 	 */
 	public static void processAllData() throws Exception {
+		Dataset allRest = (new SemEval2014Task4ABSAReader()).read(new File(Framework.RAWDATA_PATH + "ABSA-14_Restaurants_All.xml"));
+		(new DatasetJSONWriter()).write(allRest, new File(Framework.DATA_PATH+"SemEval2014Restaurants-All.json"));
+		(new DatasetJSONWriter(true)).write(allRest, new File(Framework.DATA_PATH+"SemEval2014Restaurants-All.pretty.json"));
+		System.exit(0);
+		
 		Dataset trainRest = (new SemEval2014Task4ABSAReader()).read(new File(Framework.RAWDATA_PATH + "ABSA-14_Restaurants_Train_Data.xml"));
 		(new DatasetJSONWriter()).write(trainRest, new File(Framework.DATA_PATH+"SemEval2014Restaurants-Train.json"));
 		(new DatasetJSONWriter(true)).write(trainRest, new File(Framework.DATA_PATH+"SemEval2014Restaurants-Train.pretty.json"));
@@ -176,7 +181,9 @@ public class SemEval2014Task4ABSAReader implements IDataReader {
 			String polarity = aspectCategoryElement.getAttributeValue("polarity");
 			Span categorySpan = new Span("aspectCategory", sentenceSpan);
 			categorySpan.putAnnotation("category", category);
-			categorySpan.putAnnotation("polarity", polarity);
+			if (polarity != null){
+				categorySpan.putAnnotation("polarity", polarity);
+			}
 			//also record an augmented category field where we omit the anecdotes/miscellaneous category
 			// as is done for the icwe2014 paper
 			if (!category.equalsIgnoreCase("anecdotes/miscellaneous")){

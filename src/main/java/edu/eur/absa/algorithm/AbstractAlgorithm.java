@@ -5,7 +5,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
+import edu.eur.absa.Framework;
 import edu.eur.absa.evaluation.evaluators.Evaluator;
 import edu.eur.absa.evaluation.results.EvaluationResults;
 import edu.eur.absa.model.DataEntity;
@@ -38,7 +40,7 @@ public abstract class AbstractAlgorithm {
 	 * Features to cache, this is useful in e.g. cross-validation where an algorithm is run
 	 * multiple times. Caching the textual features is a good time saver.
 	 */
-	protected HashMap<? extends DataEntity, HashSet<String>> features = new HashMap<>();
+	protected HashMap<DataEntity, HashSet<String>> features = new HashMap<>();
 	/**
 	 * the training, validation, test splits of the data
 	 */
@@ -116,6 +118,12 @@ public abstract class AbstractAlgorithm {
 		this.dataSubSets = dataSubSets;
 		testAnnotatables.clear();
 		testAnnotatables.addAll(dataset.getSubSpans(getTestData(), this.targetSpanType));
+		
+//		for (DataEntity s : testAnnotatables){
+//			if (s instanceof Span){
+//				Framework.log(((Span)s).getType());
+//			}
+//		}
 //		for (Span s : getTestData()){
 //			testAnnotatables.add(s);
 //		}
@@ -205,24 +213,36 @@ public abstract class AbstractAlgorithm {
 	}
 	
 	/**
-	 * Execute this algorithm from scratch, including the preprocessing step.
+	 * Execute this algorithm from scratch, including the preprocessing and training step.
 	 * @return A set of EvaluationResults object that contain the evaluation results of each task
 	 */
 	public HashMap<Class<? extends Evaluator>, EvaluationResults> executeAndReturnResults(){
-		return executeAndReturnResults(true);
+		return executeAndReturnResults(true, true);
 	}
+	
 	/**
 	 * Execute this algorithm and specify whether the preprocessing step has to be performed
 	 * @param preprocess Perform the preprocess step if true
 	 * @return A set of EvaluationResults object that contain the evaluation results of each task
 	 */
 	public HashMap<Class<? extends Evaluator>, EvaluationResults> executeAndReturnResults(boolean preprocess){
+		return executeAndReturnResults(preprocess, true);
+	}
+	/**
+	 * Execute this algorithm and specify whether the preprocessing and/or training step has to be performed
+	 * @param preprocess Perform the preprocess step if true
+	 * @param train Perform the train step if true
+	 * @return A set of EvaluationResults object that contain the evaluation results of each task
+	 */
+	public HashMap<Class<? extends Evaluator>, EvaluationResults> executeAndReturnResults(boolean preprocess, boolean train){
 		clean();
 		HashMap<Class<? extends Evaluator>, EvaluationResults> results = new HashMap<>();
 		if (preprocess){
 			preprocess();
 		}
-		train();
+		if (train){
+			train();
+		}
 		predict();
 		String output = "";
 		for (Evaluator eval : evaluators){
@@ -310,8 +330,11 @@ public abstract class AbstractAlgorithm {
 	 * @param s The Span for which predictions were made
 	 * @return The predictions that fall within this Span.
 	 */
-	public HashSet<Prediction> getPrediction(Span s){
+	public HashSet<Prediction> getPrediction(DataEntity s){
 		return predictions.get(s);
+	}
+	public Set<DataEntity> getPredictionTargets(){
+		return predictions.keySet();
 	}
 	
 	/**
@@ -377,5 +400,7 @@ public abstract class AbstractAlgorithm {
 		return properties.getProperty(key, defaultValue);
 	}
 	
-	
+	public void copyPropertiesFrom(AbstractAlgorithm toCopyFrom){
+		this.properties.putAll(toCopyFrom.properties);
+	}
 }

@@ -8,6 +8,7 @@ import java.io.IOException;
 import org.json.JSONObject;
 
 import edu.eur.absa.Framework;
+import edu.eur.absa.algorithm.AbstractAlgorithm;
 import edu.eur.absa.model.DataEntity;
 import edu.eur.absa.model.Dataset;
 import edu.eur.absa.model.Relation;
@@ -109,5 +110,17 @@ public class DatasetJSONWriter implements IDataWriter{
 		}
 		out.close();
 	}
+
+	@Override
+	public void write(Dataset dataset, AbstractAlgorithm alg, File file) throws IOException {
+		throw new IOException("Saving predictions in this file format is not supported");
+	}
+
+	@Override
+	public boolean supportsWritingPredictions() {
+		return false;
+	}
+	
+	
 
 }

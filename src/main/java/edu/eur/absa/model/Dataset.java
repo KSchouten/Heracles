@@ -3,6 +3,7 @@ package edu.eur.absa.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Random;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -205,7 +206,7 @@ public class Dataset {
 	
 	public HashSet<Span> getSubSpans(HashSet<Span> originalData, String subSpanType){
 		HashSet<Span> subSpanData = new HashSet<Span>();
-
+//		Framework.log("Subspantype:"+subSpanType);
 		for (Span span : originalData){
 			subSpanData.addAll(
 					span.getCoveredSpans(
@@ -228,6 +229,10 @@ public class Dataset {
 	
 	public DataEntity getAnnotatable(int id){
 		return annotatablesById.get(id);
+	}
+	
+	public Iterator<DataEntity> getDataEntityIterator(){
+		return annotatablesById.values().iterator();
 	}
 	
 	
@@ -269,5 +274,53 @@ public class Dataset {
 	}
 	public void removeAnnotatable(DataEntity a){
 		annotatablesById.remove(a.getId());
+	}
+	/**
+	 * Use this method to add the contents of another Dataset object into this Dataset
+	 * @param moreData The Dataset whose content will be added to this Dataset
+	 */
+	public void mergeDataset(Dataset moreData) throws Exception{
+		//first, check compatibility
+		HashSet<NLPTask> moreDataNLPTasks = new HashSet<>();
+		moreDataNLPTasks.addAll(moreData.performedNLPTasks);
+		for (NLPTask t : performedNLPTasks){
+			if (!moreDataNLPTasks.contains(t)){
+				throw new Exception("Datasets are not compatible: different NLP tasks have been performed on both Datasets\n"+this.performedNLPTasks+"\n"+moreData.performedNLPTasks);
+			}
+			moreDataNLPTasks.remove(t);
+		}
+		if (moreDataNLPTasks.size()>0){
+			throw new Exception("Datasets are not compatible: different NLP tasks have been performed on both Datasets\n"+this.performedNLPTasks+"\n"+moreData.performedNLPTasks);
+		}
+		
+		if (!textualUnitSpanType.equalsIgnoreCase(moreData.textualUnitSpanType)){
+			throw new Exception("Datasets are not compatible: different textual unit span types are in use");
+		}
+		HashMap<String, Class<?>> moreDataAnnotationDataTypes = new HashMap<>();
+		moreDataAnnotationDataTypes.putAll(moreData.annotationDataTypes);
+		for (String annotationType : annotationDataTypes.keySet()){
+			if (!moreDataAnnotationDataTypes.containsKey(annotationType) ||
+					!moreDataAnnotationDataTypes.get(annotationType).equals(annotationDataTypes.get(annotationType))){
+				throw new Exception("Datasets are not compatible: different sets of annotations are in use");
+			}
+			moreDataAnnotationDataTypes.remove(annotationType);
+		}
+		if (moreDataAnnotationDataTypes.size() > 0){
+			throw new Exception("Datasets are not compatible: different sets of annotations are in use");
+		}
+		//ok, both Datasets are compatible, add everything to this Dataset
+		Framework.log("Merging two Datasets....");
+		for (DataEntity d : moreData.annotatablesById.values()){
+			//this will also update the id's and dataset references of each DataEntity
+			d.moveToDifferentDataset(this); 
+			//special references for Spans and Relations for indexing purposes
+			if (d instanceof Span){
+				this.addSpan((Span)d);
+			}
+			if (d instanceof Relation){
+				this.addRelation((Relation)d);
+			}
+		}
+		Framework.log("Merging two Datasets....Done!");
 	}
 }

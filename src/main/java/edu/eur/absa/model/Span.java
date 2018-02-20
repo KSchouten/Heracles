@@ -10,6 +10,7 @@ import java.util.TreeSet;
 
 import org.json.JSONObject;
 
+import edu.eur.absa.Framework;
 import edu.eur.absa.model.exceptions.IllegalSpanException;
 
 /**
@@ -26,7 +27,7 @@ public class Span extends DataEntity implements NavigableSet<Word> {
 	 */
 	private String spanType;
 	
-	private TreeSet<Word> words = new TreeSet<>();
+	private TreeSet<Word> words = new TreeSet<Word>();
 	
 	private HashMap<Integer, Word> wordsByOrder = new HashMap<>();
 	/**
@@ -272,6 +273,7 @@ public class Span extends DataEntity implements NavigableSet<Word> {
 	public String toString(){
 		JSONObject spanJSON = new JSONObject();
 		spanJSON.put("spanType", getType());
+		spanJSON.put("id", getId());
 		if (size()>0){
 			spanJSON.put("first", first().getOrder());
 			spanJSON.put("last", last().getOrder());
@@ -281,7 +283,7 @@ public class Span extends DataEntity implements NavigableSet<Word> {
 		for (String annotationKey : annotations.keySet()){
 			annotationsJSON.put(annotationKey, (Object)getAnnotation(annotationKey));
 		}
-		return spanJSON.toString();
+		return spanJSON.toString()+"\n";
 	}
 
 
@@ -294,6 +296,7 @@ public class Span extends DataEntity implements NavigableSet<Word> {
 	@SuppressWarnings("unchecked")
 	public TreeSet<Word> getWords(){
 		return (TreeSet<Word>) words.clone();
+		//return words;
 	}
 
 	@Override
@@ -321,7 +324,13 @@ public class Span extends DataEntity implements NavigableSet<Word> {
 
 	@Override
 	public boolean contains(Object o) {
-		return words.contains(o);
+		if (o instanceof Word){
+			//TODO: This is extremely strange: without the cloning, a Word is not always properly found!
+			return ((TreeSet<Word>)words.clone()).contains((Word)o);
+		} else {
+			Framework.log("Incorrect comparison");
+			return false;
+		}
 	}
 
 	@Override

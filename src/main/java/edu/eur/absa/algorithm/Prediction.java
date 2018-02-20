@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import edu.eur.absa.model.DataEntity;
-import edu.eur.absa.model.Annotations;
 import edu.eur.absa.model.Dataset;
 import edu.eur.absa.model.Span;
 
@@ -66,5 +65,14 @@ public class Prediction extends DataEntity{
 		HashSet<Prediction> singletonSet = new HashSet<>();
 		singletonSet.add(this);
 		return singletonSet;
+	}
+	
+	@Override
+	public String toString(){
+		if (annotatable == null){
+			return parentSpan.toString() + "\n" + spanType + "\n" + annotations.toString();
+		} else {
+			return annotatable.toString() + "\n" + annotations.toString();
+		}
 	}
 }

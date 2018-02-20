@@ -41,9 +41,9 @@ public class SemEval2015Task12ABSAReader implements IDataReader {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception{
-		showStatistics((new DatasetJSONReader()).read(new File(Framework.DATA_PATH+"SemEval2016SB1Restaurants-Train.json")));
+		showStatistics((new DatasetJSONReader()).read(new File(Framework.DATA_PATH+"SemEval2016SB1Laptops-Train.json")));
 
-		showStatistics((new DatasetJSONReader()).read(new File(Framework.DATA_PATH+"SemEval2016SB1Restaurants-Test.json")));
+		showStatistics((new DatasetJSONReader()).read(new File(Framework.DATA_PATH+"SemEval2016SB1Laptops-Test.json")));
 		
 	}
 	
@@ -104,6 +104,8 @@ public class SemEval2015Task12ABSAReader implements IDataReader {
 						Element opinionElement = opinionElements.get(k);
 						opinionElementsWithSentenceSpans.put(opinionElement, sentenceSpan);
 					}
+				} else {
+					//Framework.log("No opinions? "+sentenceId+"\n"+sentenceElement.toXML());
 				}
 			}
 			reviewSpan.putAnnotation("text", reviewText);
@@ -135,7 +137,7 @@ public class SemEval2015Task12ABSAReader implements IDataReader {
 			Span opinionSpan = new Span("opinion", sentenceSpan.getTextualUnit());
 			opinionSpan.putAnnotation("category", category);
 			opinionSpan.putAnnotation("polarity", polarity);
-			if (!target.equalsIgnoreCase("NULL")){
+			if (target != null && !target.equalsIgnoreCase("NULL")){
 				//these are mostly useless after the span has been determined, but
 				// we'll keep them around so we can reconstruct the (annotated) data
 				// in the same format

@@ -40,6 +40,7 @@ public class Experiment {
 	private double[] subSetProportions;
 	private int repetitions;
 	
+	private boolean testOnly = false;
 	private boolean run = false;
 	private boolean dataSplit = false;
 	
@@ -91,9 +92,16 @@ public class Experiment {
 			repetitions = 1;
 			nrFolds= 0;
 			dataSplit = true;	
+			//merge datasets
+			try {
+				dataset.mergeDataset(testData);
+			} catch(Exception e){
+				e.printStackTrace();
+			}
 		}
 		return this;
 	}
+	
 	public Experiment setCrossValidation(int nrFolds, double... remainingSubSetProportions){
 		return setCrossValidation(1, nrFolds, remainingSubSetProportions);
 	}
@@ -161,13 +169,15 @@ public class Experiment {
 		for (AbstractAlgorithm alg : algs){
 			boolean preprocessed = false;
 			for (ArrayList<HashSet<Span>> subsets : multipleDataSubSets){
+//				Framework.log(subsets.toString());
 				alg.setDataSubSets(subsets, dataset);
 				if (!preprocessed){
 					alg.preprocess();
 					preprocessed = true;
 				}
 					
-				HashMap<Class<? extends Evaluator>, EvaluationResults> results = alg.executeAndReturnResults(false);
+				HashMap<Class<? extends Evaluator>, EvaluationResults> results = 
+						alg.executeAndReturnResults(false);
 				
 				for (Class<? extends Evaluator> evaluator : results.keySet()){
 					if (showAllResults){
@@ -230,10 +240,10 @@ public class Experiment {
 		run=true;
 		return this;
 	}
-	public void savePredictions(IDataWriter dataWriter, File file){
+	public void savePredictions(IDataWriter dataWriter, AbstractAlgorithm alg, File file){
 		if (testSet != null && run){
 			try {
-				dataWriter.write(testSet, file);
+				dataWriter.write(testSet, alg, file);
 			} catch (IOException e){
 				e.printStackTrace();
 			}

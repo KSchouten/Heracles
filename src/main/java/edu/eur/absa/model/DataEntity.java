@@ -40,10 +40,10 @@ public abstract class DataEntity implements Comparable<DataEntity> {
 	 * of using the built-in methods in DataEntity to access and update annotations
 	 * @return
 	 */
-	@Deprecated
-	public Annotations getAnnotations() {
-		return new Annotations(annotations, dataset);
-	}
+//	@Deprecated
+//	public Annotations getAnnotations() {
+//		return new Annotations(annotations, dataset);
+//	}
 	
 	public String showAnnotations(){
 		return annotations.toString();
@@ -122,5 +122,10 @@ public abstract class DataEntity implements Comparable<DataEntity> {
 	
 	public Set<String> getAnnotationTypes(){
 		return annotations.keySet();
+	}
+	
+	public void moveToDifferentDataset(Dataset newDataset){
+		dataset = newDataset;
+		id = dataset.getNextId(this);
 	}
 }

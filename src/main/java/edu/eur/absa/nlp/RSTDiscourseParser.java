@@ -25,7 +25,8 @@ import edu.eur.absa.model.Relation;
 import edu.eur.absa.model.Span;
 import edu.eur.absa.model.Word;
 import edu.eur.absa.model.exceptions.IllegalSpanException;
-import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
+//import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
+
 import scala.Enumeration;
 import scala.Enumeration.Value;
 import scala.Option;

@@ -147,7 +147,7 @@ public class AnnotationLabelEvaluator implements Evaluator {
 			}
 		}
 		if (!groupBy){
-			return new ClassificationResults(getLabel(), truePos.get(""), falsePos.get(""), falseNeg.get(""));
+			return new ClassificationResults(getLabel(), truePos.getOrDefault("",0), falsePos.getOrDefault("",0), falseNeg.getOrDefault("",0));
 		} else {
 			return new GroupedClassificationResults(getLabel(), truePos, falsePos, falseNeg);
 		}

@@ -47,8 +47,16 @@ public class SpanLabelEvaluator implements Evaluator {
 //		evaluate(dataset, predictionsPerParentSpan);
 //	
 //	}
+	
+	public String getSpanType(){
+		return spanType;
+	}
+	public String getSpanLabel(){
+		return spanLabel;
+	}
 	@Override
 	public EvaluationResults evaluate(HashSet<? extends DataEntity> testSet, HashMap<? extends DataEntity, HashSet<Prediction>> predictions,HashMap<? extends DataEntity, HashSet<String>> features){
+
 		int truePos=0;
 		int falsePos=0;
 		int falseNeg=0;
@@ -57,7 +65,10 @@ public class SpanLabelEvaluator implements Evaluator {
 		
 //		for (DataEntity parentAnnotatable : predictions.keySet()){
 		for (DataEntity parentAnnotatable : testSet){
+			
+			
 			Span parentSpan = (Span)parentAnnotatable;
+//			Framework.log(parentSpan.getType());
 			Dataset dataset = parentSpan.getDataset();
 			HashSet<Prediction> preds = predictions.getOrDefault(parentSpan, new HashSet<Prediction>());
 			HashSet<Object> predictedLabels = new HashSet<>();
