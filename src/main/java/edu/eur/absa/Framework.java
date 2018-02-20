@@ -5,6 +5,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import org.slf4j.LoggerFactory;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+
 /**
  * The Framework class sets up some application wide static variables and static methods that can be used 
  * throughout the framework
@@ -52,5 +56,10 @@ public class Framework {
 		} catch (IOException e){
 			e.printStackTrace();
 		}		
+	}
+	
+	public static void supressJenaMessages() {
+		Logger root = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+		root.setLevel(Level.INFO);
 	}
 }

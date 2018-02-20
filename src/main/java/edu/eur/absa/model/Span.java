@@ -325,12 +325,13 @@ public class Span extends DataEntity implements NavigableSet<Word> {
 	@Override
 	public boolean contains(Object o) {
 		if (o instanceof Word){
-			//TODO: This is extremely strange: without the cloning, a Word is not always properly found!
-			return ((TreeSet<Word>)words.clone()).contains((Word)o);
+//			//TODO: This is extremely strange: without the cloning, a Word is not always properly found!
+			return ( words.contains((Word)o) || ((TreeSet<Word>)words.clone()).contains((Word)o));
 		} else {
 			Framework.log("Incorrect comparison");
 			return false;
 		}
+		//return words.contains(o);
 	}
 
 	@Override

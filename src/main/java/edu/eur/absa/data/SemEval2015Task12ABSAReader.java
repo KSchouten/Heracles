@@ -41,9 +41,11 @@ public class SemEval2015Task12ABSAReader implements IDataReader {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception{
-		showStatistics((new DatasetJSONReader()).read(new File(Framework.DATA_PATH+"SemEval2016SB1Laptops-Train.json")));
-
-		showStatistics((new DatasetJSONReader()).read(new File(Framework.DATA_PATH+"SemEval2016SB1Laptops-Test.json")));
+		processAllData();
+		
+//		showStatistics((new DatasetJSONReader()).read(new File(Framework.DATA_PATH+"SemEval2016SB1Laptops-Train.json")));
+//
+//		showStatistics((new DatasetJSONReader()).read(new File(Framework.DATA_PATH+"SemEval2016SB1Laptops-Test.json")));
 		
 	}
 	
