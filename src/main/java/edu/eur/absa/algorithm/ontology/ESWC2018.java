@@ -18,8 +18,8 @@ public class ESWC2018 {
 		// The Jena lib dumps so much nonsense in the console, that in order to get the useful bits
 		//  you kind of have to save the console output to a file instead.
 		// Note that this will use the file instead of the console out so you won't see much 
-//		Framework.fileInsteadOfConsole();
-		Framework.supressJenaMessages();
+		Framework.fileInsteadOfConsole();
+		Framework.suppressJenaMessages();
 		
 		//If the raw SemEval XML data have not yet been processed (gone through NLP pipeline)
 		// you need to uncomment this
@@ -68,8 +68,8 @@ public class ESWC2018 {
 			.setProperty("ont", ontology)
 			.setProperty("ont_ns", "http://www.kimschouten.com/sentiment/restaurant");
 		
-//		runExperimentTable1(Ont,BoW,OntBoW,BoWOnt,train2015);
-//		runExperimentTable2(Ont,BoW,OntBoW,BoWOnt,train2016);
+		runExperimentTable1(Ont,BoW,OntBoW,BoWOnt,train2015);
+		runExperimentTable2(Ont,BoW,OntBoW,BoWOnt,train2016);
 		runExperimentTable3(OntBoW,train2015,test2015,train2016,test2016);
 //		runExperimentFigure5(Ont,BoW,OntBoW,BoWOnt,train2015,test2015);
 //		runExperimentFigure6(Ont,BoW,OntBoW,BoWOnt,train2016,test2016);
