@@ -62,7 +62,7 @@ public class ReasoningOntology implements IOntology {
 //	private InfModel ontology;// = ModelFactory.createRDFSModel(schema, data);
 	
 	private HashMap<String, HashSet<String>> superclasses = new HashMap<>();
-	
+	private HashMap<String, String> antonyms = new HashMap<>();
 	
 	private ReasoningOntology(String ontologyFile){
 //		data = ModelFactory.createOntologyModel();
@@ -308,6 +308,21 @@ public class ReasoningOntology implements IOntology {
 			Framework.error("No superclasses for: "+classURI);
 		}
 		return superclasses.get(classURI);
+	}
+	
+	public String getAntonym(String classURI){
+		if (antonyms.containsKey(classURI)) {
+			return antonyms.get(classURI);
+		} else {
+			HashSet<String> antonymURIs = getConceptRelations(classURI).get("http://www.w3.org/2002/07/owl#disjointWith");
+			String antonymURI = null;
+			if (antonymURIs != null) {
+				antonymURI = antonymURIs.iterator().next();
+			}
+			antonyms.put(classURI, antonymURI);
+			return antonymURI;
+		}
+		
 	}
 	
 	public HashSet<String> getClasses(String indivURI){

@@ -275,15 +275,23 @@ public class OntologySentimentAlgorithm extends AbstractAlgorithm {
 					Framework.log(System.currentTimeMillis()+"\tLoop over "+thisWordSuperclasses.size()+ " superclasses of current word");
 					
 					for (String classURI : thisWordSuperclasses){
-						if (negate && false){
+						if (negate){
 							Framework.log(System.currentTimeMillis()+"\tPerform negation");
 							//get disjoint class as antonym
-							HashSet<String> antonymURIs = ont.getConceptRelations(classURI).get("http://www.w3.org/2002/07/owl#disjointWith");
-							if (antonymURIs != null){
-																	
-								String antonymURI = antonymURIs.iterator().next();
+//							HashSet<String> antonymURIs = ont.getConceptRelations(classURI).get("http://www.w3.org/2002/07/owl#disjointWith");
+//							Framework.log(System.currentTimeMillis()+"\tRetrieved antonym of current superclass");
+//							
+//							if (antonymURIs != null){
+//																	
+//								String antonymURI = antonymURIs.iterator().next();
+//								foundURIs.put(antonymURI, Math.max(wordDistance, foundURIs.getOrDefault(antonymURI, 0.0)));
+//								
+//							} else {
+//								foundURIs.put(classURI, Math.max(wordDistance, foundURIs.getOrDefault(classURI, 0.0)));
+//							}
+							String antonymURI = ont.getAntonym(classURI);
+							if (antonymURI != null) {
 								foundURIs.put(antonymURI, Math.max(wordDistance, foundURIs.getOrDefault(antonymURI, 0.0)));
-								
 							} else {
 								foundURIs.put(classURI, Math.max(wordDistance, foundURIs.getOrDefault(classURI, 0.0)));
 							}
@@ -318,14 +326,22 @@ public class OntologySentimentAlgorithm extends AbstractAlgorithm {
 								for (String superclassURI : ont.getSuperclasses(newClassURI)){
 									if (negate || word2Negated){
 										//get disjoint class as antonym
-										HashSet<String> antonymURIs = ont.getConceptRelations(superclassURI).get("http://www.w3.org/2002/07/owl#disjointWith");
-										if (antonymURIs != null){
-																				
-											String antonymURI = antonymURIs.iterator().next();
+//										HashSet<String> antonymURIs = ont.getConceptRelations(superclassURI).get("http://www.w3.org/2002/07/owl#disjointWith");
+//										if (antonymURIs != null){
+//																				
+//											String antonymURI = antonymURIs.iterator().next();
+//											foundURIs.put(antonymURI, Math.max(wordDistance, foundURIs.getOrDefault(antonymURI, 0.0)));
+//										} else {
+//											foundURIs.put(superclassURI, Math.max(wordDistance, foundURIs.getOrDefault(superclassURI, 0.0)));
+//										}
+										
+										String antonymURI = ont.getAntonym(superclassURI);
+										if (antonymURI != null) {
 											foundURIs.put(antonymURI, Math.max(wordDistance, foundURIs.getOrDefault(antonymURI, 0.0)));
 										} else {
 											foundURIs.put(superclassURI, Math.max(wordDistance, foundURIs.getOrDefault(superclassURI, 0.0)));
 										}
+										
 									} else {
 										foundURIs.put(superclassURI, Math.max(wordDistance, foundURIs.getOrDefault(superclassURI, 0.0)));
 										
