@@ -116,7 +116,7 @@ public class AspectSentimentSVMAlgorithm extends AbstractAlgorithm {
 		if (hasProperty("use_ontology")){
 //			 ont =new ReasoningOntology(Main.EXTERNALDATA_PATH + "RestaurantSentiment.owl");
 //			 ont =new ReasoningOntology(Framework.EXTERNALDATA_PATH + "RestaurantSentimentExpanded.owl");
-			ont = new ReasoningOntology(Framework.EXTERNALDATA_PATH + getProperty("ont"));
+			ont = ReasoningOntology.getOntology(Framework.EXTERNALDATA_PATH + getProperty("ont"));
 		}
 		
 		//collect all attributes and their values for all the spans

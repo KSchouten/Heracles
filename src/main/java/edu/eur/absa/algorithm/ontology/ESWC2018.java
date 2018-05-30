@@ -15,31 +15,32 @@ import edu.eur.absa.nlp.OntologyLookup;
 public class ESWC2018 {
 
 	public static void main(String[] args) throws Exception{
-		// The Jena lib dumps so much nonsense in the console, that in order to get the useful bits
-		//  you kind of have to save the console output to a file instead.
 		// Note that this will use the file instead of the console out so you won't see much 
 		Framework.fileInsteadOfConsole();
+		// Supress all the nonsense that Jena by default dumps in the console.
 		Framework.suppressJenaMessages();
 		
 		//If the raw SemEval XML data have not yet been processed (gone through NLP pipeline)
 		// you need to uncomment this
-		//SemEval2015Task12ABSAReader.main(null);
+//		SemEval2015Task12ABSAReader.main(null);
 		
 		/*
 		 * Read SemEval 2015 ABSA and SemEval 2016 ABSA data (restaurants only)
 		 */
-		String ontology = "RestaurantSentiment.owlExpanded-1509378650303.owl";
+		
+		String ontology = "ontology.owl";
 		
 		Dataset train2015 =  (new DatasetJSONReader()).read(new File(Framework.DATA_PATH+"SemEval2015Restaurants-Train.json"));
-		train2015.process(new OntologyLookup(null, new ReasoningOntology(Framework.EXTERNALDATA_PATH + ontology)), "review");
+		train2015.process(new OntologyLookup(null, ReasoningOntology.getOntology(Framework.EXTERNALDATA_PATH + ontology)), "review");
 		Dataset test2015 =  (new DatasetJSONReader()).read(new File(Framework.DATA_PATH+"SemEval2015Restaurants-Test.json"));
-		test2015.process(new OntologyLookup(null, new ReasoningOntology(Framework.EXTERNALDATA_PATH + ontology)), "review");
+		test2015.process(new OntologyLookup(null, ReasoningOntology.getOntology(Framework.EXTERNALDATA_PATH + ontology)), "review");
 		
 		Dataset train2016 =  (new DatasetJSONReader()).read(new File(Framework.DATA_PATH+"SemEval2016SB1Restaurants-Train.json"));
-		train2016.process(new OntologyLookup(null, new ReasoningOntology(Framework.EXTERNALDATA_PATH + ontology)), "review");
+		train2016.process(new OntologyLookup(null, ReasoningOntology.getOntology(Framework.EXTERNALDATA_PATH + ontology)), "review");
 		Dataset test2016 =  (new DatasetJSONReader()).read(new File(Framework.DATA_PATH+"SemEval2016SB1Restaurants-Test.json"));
-		test2016.process(new OntologyLookup(null, new ReasoningOntology(Framework.EXTERNALDATA_PATH + ontology)), "review");
+		test2016.process(new OntologyLookup(null, ReasoningOntology.getOntology(Framework.EXTERNALDATA_PATH + ontology)), "review");
 		
+		ontology = "ontology.owl-Expanded.owl";
 		int nrc = AspectSentimentSVMAlgorithm.RESTAURANTS;
 		
 		
@@ -68,9 +69,9 @@ public class ESWC2018 {
 			.setProperty("ont", ontology)
 			.setProperty("ont_ns", "http://www.kimschouten.com/sentiment/restaurant");
 		
-		runExperimentTable1(Ont,BoW,OntBoW,BoWOnt,train2015);
-		runExperimentTable2(Ont,BoW,OntBoW,BoWOnt,train2016);
-		runExperimentTable3(OntBoW,train2015,test2015,train2016,test2016);
+//		runExperimentTable1(Ont,BoW,OntBoW,BoWOnt,train2015);
+//		runExperimentTable2(Ont,BoW,OntBoW,BoWOnt,train2016);
+		runExperimentTable3(Ont,train2015,test2015,train2016,test2016);
 //		runExperimentFigure5(Ont,BoW,OntBoW,BoWOnt,train2015,test2015);
 //		runExperimentFigure6(Ont,BoW,OntBoW,BoWOnt,train2016,test2016);
 //		runExperimentTable4(Ont,BoW,OntBoW,BoWOnt,train2015,test2015,train2016,test2016);
@@ -90,7 +91,7 @@ public class ESWC2018 {
 		Framework.log("****************************");
 		
 		Experiment.createNewExperiment()
-			.addAlgorithms(Ont, BoW, OntBoW, BoWOnt)
+			.addAlgorithms(Ont)//, BoW, OntBoW, BoWOnt)
 			.setDataset(train2015)	
 			.setCrossValidation(1, 10, 0.8, 0.2)
 			.run();
@@ -120,7 +121,7 @@ public class ESWC2018 {
 	 * Experiments to get the results from Table 3 (only the Ont+Bow results)
 	 * Left column first, then right colomn
 	 */
-	public static void runExperimentTable3(AbstractAlgorithm OntBoW,
+	public static void runExperimentTable3(AbstractAlgorithm Ont,
 			Dataset train2015,
 			Dataset test2015,
 			Dataset train2016,
@@ -131,11 +132,11 @@ public class ESWC2018 {
 		Framework.log("****************************");
 		
 		Experiment.createNewExperiment()
-			.addAlgorithms(OntBoW)
+			.addAlgorithms(Ont)
 			.setTrainingAndTestSet(train2015, test2015, true, 0.8, 0.2)
 			.run();
 		Experiment.createNewExperiment()
-			.addAlgorithms(OntBoW)
+			.addAlgorithms(Ont)
 			.setTrainingAndTestSet(train2016, test2016, true, 0.8, 0.2)
 			.run();
 	}

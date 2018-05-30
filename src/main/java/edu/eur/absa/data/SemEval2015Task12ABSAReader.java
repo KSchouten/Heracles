@@ -121,9 +121,9 @@ public class SemEval2015Task12ABSAReader implements IDataReader {
 			.process(new CoreNLPPosTagger(), "sentence")
 			.process(new CoreNLPLemmatizer(), "sentence")
 //			.process(new CoreNLPNamedEntityRecognizer(), "sentence")
-//			.process(new CoreNLPParser(), "sentence")
-//			.process(new CoreNLPDependencyParser(), "sentence")
-//			.process(new CoreNLPSentimentAnnotator(), "sentence")
+			.process(new CoreNLPParser(), "sentence")
+			.process(new CoreNLPDependencyParser(), "sentence")
+			.process(new CoreNLPSentimentAnnotator(), "sentence")
 			;
 		
 		//only thing left is to get the opinions and make them span the correct words

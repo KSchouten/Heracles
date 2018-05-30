@@ -12,7 +12,9 @@ import org.apache.jena.ontology.Individual;
 import org.apache.jena.ontology.OntClass;
 import org.apache.jena.ontology.OntModel;
 import org.apache.jena.ontology.OntModelSpec;
+import org.apache.jena.rdf.model.InfModel;
 import org.apache.jena.rdf.model.Literal;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.ModelFactory;
 import org.apache.jena.rdf.model.Property;
@@ -21,6 +23,7 @@ import org.apache.jena.rdf.model.Resource;
 import org.apache.jena.rdf.model.SimpleSelector;
 import org.apache.jena.rdf.model.Statement;
 import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.reasoner.ReasonerRegistry;
 import org.apache.jena.util.FileManager;
 import org.apache.jena.util.iterator.ExtendedIterator;
 
@@ -31,6 +34,9 @@ import edu.eur.absa.model.Word;
 
 public class ReasoningOntology implements IOntology {
 
+	private static String singletonOntologyFile="";
+	private static ReasoningOntology singletonOntology;
+	
 	public final String NS = "http://www.kimschouten.com/sentiment/restaurant"; 
 	public final String URI_ActionMention = NS+"#ActionMention";
 	public final String URI_EntityMention = NS+"#EntityMention";
@@ -52,10 +58,14 @@ public class ReasoningOntology implements IOntology {
 	
 	private OntModel ontology = ModelFactory.createOntologyModel(OntModelSpec.OWL_DL_MEM_RULE_INF);
 	
+	private OntModel data;// = FileManager.get().loadModel("file:data/rdfsDemoData.rdf");
+//	private InfModel ontology;// = ModelFactory.createRDFSModel(schema, data);
+	
 	private HashMap<String, HashSet<String>> superclasses = new HashMap<>();
 	
 	
-	public ReasoningOntology(String ontologyFile){
+	private ReasoningOntology(String ontologyFile){
+//		data = ModelFactory.createOntologyModel();
 		
 		// use the FileManager to find the input file
 		 InputStream in = FileManager.get().open( ontologyFile );
@@ -66,12 +76,28 @@ public class ReasoningOntology implements IOntology {
 
 		
 		// read the RDF/XML file
-		
 		ontology.read(in, null);
-		
+		data = ontology;
+//		data.read(in, null);
+		updateInfModel();
 		
 	}
+	
+	private void updateInfModel() {
+//		ontology = ModelFactory.createInfModel(
+//				ReasonerRegistry.getOWLMiniReasoner(), data);
+	}
 
+	public static ReasoningOntology getOntology(String ontologyFile) {
+		if (singletonOntologyFile.equalsIgnoreCase(ontologyFile)) {
+			return singletonOntology;
+		} else {
+			singletonOntologyFile = ontologyFile;
+			singletonOntology = new ReasoningOntology(ontologyFile);
+			return singletonOntology;
+		}
+	}
+	
 	public void save(String ontologyFile){
 		save(ontologyFile, false);
 	}
@@ -92,14 +118,15 @@ public class ReasoningOntology implements IOntology {
 		}
 	}
 	
-	public String addIndividual(String lemma, String classURI, String... additionalClasses){
-		Individual indiv = ontology.createIndividual(NS+"I"+lemma, ontology.getResource(classURI));
-		for (String addClass :additionalClasses){
-			System.out.println(addClass + "\t" + ontology.getOntClass(addClass));
-			indiv.addOntClass(ontology.getOntClass(addClass));
-		}
-		return indiv.getURI();
-	}
+//	public String addIndividual(String lemma, String classURI, String... additionalClasses){
+//		Individual indiv = data.createIndividual(NS+"I"+lemma, ontology.getResource(classURI));
+//		for (String addClass :additionalClasses){
+//			System.out.println(addClass + "\t" + data.getOntClass(addClass));
+//			indiv.addOntClass(data.getOntClass(addClass));
+//		}
+//		this.updateInfModel();
+//		return indiv.getURI();
+//	}
 	
 	public String addClass(String lemmaURI, String... classURIs){
 		HashSet<String> existingURIs = getLexicalizedConcepts(URI_Mention, lemmaURI.toLowerCase());
@@ -110,12 +137,13 @@ public class ReasoningOntology implements IOntology {
 		String URI = NS + "#" + lemmaURI.replaceAll(" ", "");
 //		if (ontology.getResource(URI) == null){
 //		OntClass newClass = (OntClass) ontology.getResource(URI);
-		OntClass newClass = ontology.createClass(URI);
+		OntClass newClass = data.createClass(URI);
 		newClass.addProperty(ontology.getProperty(NS+"#lex"), lemmaURI.toLowerCase());
 		for (String classURI : classURIs){
 			newClass.addSuperClass(ontology.getResource(classURI));
 		}
 		Framework.log("Add Class: "+URI);
+		this.updateInfModel();
 		return newClass.getURI();
 //		} else {
 //			return URI;

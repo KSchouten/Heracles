@@ -59,7 +59,7 @@ public class OntologySentimentAlgorithm extends AbstractAlgorithm {
 				backupAlg = new AspectSentimentSVMAlgorithm("review",false)
 						.setBinaryProperties("use_stanford_sentence_sentiment", 
 								"use_review","predict_neutral", "use_category",
-								"Xuse_hyperparameter_optimization","Xignore_validation_data")
+								"use_hyperparameter_optimization","Xignore_validation_data")
 						//.setProperty("ont", getProperty("ont"))
 						;
 				;
@@ -69,7 +69,7 @@ public class OntologySentimentAlgorithm extends AbstractAlgorithm {
 			
 		}
 		if (hasProperty("ont")){
-			ont = new ReasoningOntology(Framework.EXTERNALDATA_PATH + getProperty("ont"));
+			ont = ReasoningOntology.getOntology(Framework.EXTERNALDATA_PATH + getProperty("ont"));
 			allCategoryURIs = ont.getLexicalizedConcepts(ont.URI_Mention, ont.getNS()+"#aspect", null);
 			//Framework.log("Categories: "+allCategoryURIs);
 		}
@@ -101,14 +101,33 @@ public class OntologySentimentAlgorithm extends AbstractAlgorithm {
 		
 		for (Span review : getTestData()){
 			predictForReview(review);
+//			testData(review);
 		}
-		//ont.save(getProperty("ont")+"Expanded-"+ System.currentTimeMillis() +".owl", true);
+		ont.save(getProperty("ont")+"-Expanded.owl", true);
 		
 		
 	}
 	
-	public void predictForReview(Span review){
+	public void testData(Span review) {
 		TreeSet<Span> opinionsForReview = review.getDataset().getSpans(review, "opinion");
+		for (Span opinion : opinionsForReview){
+			Framework.log(opinion.toString());
+			Span sentence = getSentence(opinion);
+			
+			Prediction p = new Prediction(opinion);
+			p.putAnnotation("polarity", "positive");
+			String cat = "No sentiment";
+			
+			p.putAnnotation("group", cat);
+			
+			this.predictions.put(opinion, p.getSingletonSet());
+		}
+	}
+	
+	public void predictForReview(Span review){
+		Framework.log(System.currentTimeMillis()+"\tStart next review");
+		TreeSet<Span> opinionsForReview = review.getDataset().getSpans(review, "opinion");
+		Framework.log("Need to assign sentiment to "+opinionsForReview.size()+" opinions in this review");
 		for (Span opinion : opinionsForReview){
 			HashMap<String, Double> foundURIs = findURIs(opinion, opinionsForReview, ont);
 			//looped over all words
@@ -176,22 +195,30 @@ public class OntologySentimentAlgorithm extends AbstractAlgorithm {
 		}
 	}
 	
+	/**
+	 * Find ontology concepts in this review, including their superclasses
+	 * @param opinion
+	 * @param opinionsForReview
+	 * @param ont
+	 * @return
+	 */
 	public HashMap<String, Double> findURIs(Span opinion, TreeSet<Span> opinionsForReview, ReasoningOntology ont){
+		Framework.log(System.currentTimeMillis()+"\tStart findURIs() for next opinion"); 
 		if (ont == null){
 			Framework.error("Ontology is null!");
 		}
 		if (allCategoryURIs == null || allCategoryURIs.isEmpty()){
 			allCategoryURIs = ont.getLexicalizedConcepts(ont.URI_Mention, ont.getNS()+"#aspect", null);
 		}
-		
 		Dataset dataset = opinion.getDataset();
 		Span sentence = getSentence(opinion);
 		TreeSet<Span> opinionsPerSentence = sentence.getCoveredSpans(opinionsForReview);
 		TreeSet<Word> scope = getScope(opinion, sentence, opinionsPerSentence.size());
 		String category = opinion.getAnnotation("category", String.class);
 		HashMap<String, Double> foundURIs = new HashMap<>();
+		Framework.log(System.currentTimeMillis()+"\tScope contains "+scope.size()+" words. Start loop.");
 		for (Word word : scope){
-			
+			Framework.log(System.currentTimeMillis()+"\tProcess next word in scope: "+word.getLemma());
 			double wordDistance = 1;
 //			if (word.getOrder() >= opinion.first().getOrder() && word.getOrder() <= opinion.last().getOrder()){
 //				wordDistance = 1;
@@ -200,13 +227,17 @@ public class OntologySentimentAlgorithm extends AbstractAlgorithm {
 //			}
 			
 			if (word.hasAnnotation("URI")){
-				
 				String URI = word.getAnnotation("URI");
+				Framework.log("Word has a URI: "+URI);
 				HashSet<String> superclasses = new HashSet<String>();
 				//get all superclasses of this word
 				superclasses.addAll(ont.getSuperclasses(URI));
+				Framework.log(System.currentTimeMillis()+"\tRetrieved superclasses");
+				
 				//get all URIs of concepts directly associated with the aspect category of the current opinion
 				HashSet<String> categoryURIs = ont.getLexicalizedConcepts(ont.URI_Mention, ont.getNS()+"#aspect", category); 
+				Framework.log(System.currentTimeMillis()+"\tRetrieved categoryURIs ");
+				
 				//for entities, only keep superclasses that are also a category concept
 				// before (without the if), generic properties were always filtered out because
 				// they do not belong to any category and thus superclasses would always be empty
@@ -235,14 +266,17 @@ public class OntologySentimentAlgorithm extends AbstractAlgorithm {
 				if (categoryFilter){ 
 //						&& (!span.hasAnnotation("target") || sentence.contains(word))){
 //						&& (sentence.contains(word))){
-					
+					Framework.log(System.currentTimeMillis()+"\tCategory filter is TRUE");
 					
 					HashSet<Word> relatedWords = new HashSet<>();
 					boolean negate = detectNegationAndFindRelatedWords(word, relatedWords);
 					HashSet<String> thisWordSuperclasses = ont.getSuperclasses(URI);
 					
+					Framework.log(System.currentTimeMillis()+"\tLoop over "+thisWordSuperclasses.size()+ " superclasses of current word");
+					
 					for (String classURI : thisWordSuperclasses){
-						if (negate){
+						if (negate && false){
+							Framework.log(System.currentTimeMillis()+"\tPerform negation");
 							//get disjoint class as antonym
 							HashSet<String> antonymURIs = ont.getConceptRelations(classURI).get("http://www.w3.org/2002/07/owl#disjointWith");
 							if (antonymURIs != null){
@@ -258,16 +292,20 @@ public class OntologySentimentAlgorithm extends AbstractAlgorithm {
 						}
 					}
 					
+					Framework.log(System.currentTimeMillis()+"\tLoop over "+relatedWords.size()+ " related words");
 					
 					boolean foundRelation = false;
 					for (Word relWord : relatedWords){
 						
 						if (relWord.hasAnnotation("URI")){
+							
 							HashSet<String> classes = ont.getSuperclasses(relWord.getAnnotation("URI"));
 							if (thisWordSuperclasses.contains(ont.URI_PropertyMention) &&
 									classes.contains(ont.URI_EntityMention) &&
 									!thisWordSuperclasses.contains(ont.URI_Sentiment) &&
 									!classes.contains(ont.URI_Sentiment)){
+								Framework.log(System.currentTimeMillis()+"\tRelated word has a URI of proper type:"+ relWord.getAnnotation("URI"));
+								
 								foundRelation = true;
 								//Main.debug("Onto Dep-Bigram:" + word.getWord() + " " + relWord.getWord());
 								boolean word2Negated = detectNegationAndFindRelatedWords(relWord, new HashSet<Word>());
@@ -432,8 +470,19 @@ public class OntologySentimentAlgorithm extends AbstractAlgorithm {
 //		}
 //		return sentences.first();
 		
-		TreeSet<Span> sentences = opinionSpan.getDataset().getSpans("sentence", opinionSpan.first());
+		TreeSet<Span> sentences = new TreeSet<Span>();
+		sentences.addAll(opinionSpan.getDataset().getSpans("sentence", opinionSpan.first()));
 		sentences.addAll(opinionSpan.getDataset().getSpans("sentence", opinionSpan.last()));
+		if (sentences.isEmpty()) {
+			Framework.log("No sentences?");
+			Framework.log("Content opinionSpan: "+opinionSpan.size());
+			Framework.log("Textual unit: "+opinionSpan.getTextualUnit().toString());
+			TreeSet<Span> sentenceList = opinionSpan.getDataset().getSpans(
+					opinionSpan.getTextualUnit(), "sentence");
+			for (Span sentence : sentenceList) {
+				Framework.log(sentence.contains(opinionSpan.first()) + "\t" + sentence.contains(opinionSpan.last()) + "\t" + sentence.getWords());
+			}
+		}
 		return sentences.first();
 	}
 	

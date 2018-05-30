@@ -29,7 +29,7 @@ public class OntologyLookup extends AbstractNLPComponent {
 		Framework.log("Retrieving all names entities from the ontology...");
 		HashMap<String, String> lemmaToURI = ont.lexToURI();
 		Framework.log("Done! Retrieved "+lemmaToURI.size() + " lexicalizations.");
-		Framework.log(""+lemmaToURI);
+		//Framework.log(""+lemmaToURI);
 		for (Span span : dataset.getSpans(textualUnitSpanType)){
 		
 			if (spanAnnotationType != null)
@@ -69,7 +69,7 @@ public class OntologyLookup extends AbstractNLPComponent {
 						URI = longerURI;
 						endWord = nextWord;
 						multiWord = candidateMultiLemma;
-						Framework.debug(candidateMultiLemma + "... Match: " + URI);
+						//Framework.debug(candidateMultiLemma + "... Match: " + URI);
 					} else {
 //						Main.debug(candidateMultiWord + "...");
 						//if we already got an expression, but the next word does not match, stop
@@ -85,9 +85,9 @@ public class OntologyLookup extends AbstractNLPComponent {
 				
 				//real multi-word entity
 				if (URI != null && endWord != w){
-					Framework.debug("Merging words into one...");
-					Framework.debug("Multiword: "+multiWord);
-					Framework.debug("Start: "+w.getWord() + "\tEnd: "+endWord.getWord());
+//					Framework.debug("Merging words into one...");
+//					Framework.debug("Multiword: "+multiWord);
+//					Framework.debug("Start: "+w.getWord() + "\tEnd: "+endWord.getWord());
 					int startOffset = w.getStartOffset();
 					int endOffset = endWord.getEndOffset();
 					nextWord = w;
@@ -115,8 +115,8 @@ public class OntologyLookup extends AbstractNLPComponent {
 						}
 					}
 					
-					Framework.debug("Previous word: "+w.getPreviousWord());
-					Framework.debug("Next word: "+w.getNextWord());
+//					Framework.debug("Previous word: "+w.getPreviousWord());
+//					Framework.debug("Next word: "+w.getNextWord());
 					
 				}
 				//single-word entity
