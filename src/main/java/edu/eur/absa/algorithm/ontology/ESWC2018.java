@@ -12,6 +12,19 @@ import edu.eur.absa.external.ReasoningOntology;
 import edu.eur.absa.model.Dataset;
 import edu.eur.absa.nlp.OntologyLookup;
 
+/**
+ * This class will run the experiments shown in our ESWC 2018 paper.
+ * For the ontology access and reasoning we use the Jena library, which works okay enough
+ *  but is unfortunately very slow, both when running and when initializing.
+ * The first time the ontology is actually used, it will build the so-called inference model,
+ *  which takes quite a bit of time.
+ * When new classes are added to the ontology by the algorithm, again, the inference model 
+ *  has to be build again. To avoid this, an 'expanded' version of the ontology is used by 
+ *  the algorithms where these newly added classes already exist. Some of these classes are
+ *  nonsense though, so do not use the expanded version for future work on the ontology.
+ * @author kimschouten
+ *
+ */
 public class ESWC2018 {
 
 	public static void main(String[] args) throws Exception{
@@ -69,8 +82,8 @@ public class ESWC2018 {
 			.setProperty("ont", ontology)
 			.setProperty("ont_ns", "http://www.kimschouten.com/sentiment/restaurant");
 		
-//		runExperimentTable1(Ont,BoW,OntBoW,BoWOnt,train2015);
-//		runExperimentTable2(Ont,BoW,OntBoW,BoWOnt,train2016);
+		runExperimentTable1(Ont,BoW,OntBoW,BoWOnt,train2015);
+		runExperimentTable2(Ont,BoW,OntBoW,BoWOnt,train2016);
 		runExperimentTable3(Ont,train2015,test2015,train2016,test2016);
 //		runExperimentFigure5(Ont,BoW,OntBoW,BoWOnt,train2015,test2015);
 //		runExperimentFigure6(Ont,BoW,OntBoW,BoWOnt,train2016,test2016);

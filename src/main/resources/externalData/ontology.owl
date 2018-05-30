@@ -35,30 +35,6 @@
     
 
 
-    <!-- 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    //
-    // Data properties
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////
-     -->
-
-    
-
-
-    <!-- http://www.kimschouten.com/sentiment/restaurant#sentimentLexicalization -->
-
-    <owl:DatatypeProperty rdf:about="http://www.kimschouten.com/sentiment/restaurant#sentimentLexicalization">
-        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
-    </owl:DatatypeProperty>
-    
-
-
-    <!-- http://www.kimschouten.com/sentiment/restaurant#targetLexicalization -->
-
-    <owl:DatatypeProperty rdf:about="http://www.kimschouten.com/sentiment/restaurant#targetLexicalization">
-        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
-    </owl:DatatypeProperty>
     
 
 
