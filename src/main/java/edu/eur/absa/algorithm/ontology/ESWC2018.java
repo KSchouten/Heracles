@@ -22,6 +22,8 @@ import edu.eur.absa.nlp.OntologyLookup;
  *  has to be build again. To avoid this, an 'expanded' version of the ontology is used by 
  *  the algorithms where these newly added classes already exist. Some of these classes are
  *  nonsense though, so do not use the expanded version for future work on the ontology.
+ * Using the use_hyperparameter_optimization will result in a grid search over gamma and C 
+ *  parameters of the SVM. This will take a long time.
  * @author kimschouten
  *
  */
@@ -82,9 +84,9 @@ public class ESWC2018 {
 			.setProperty("ont", ontology)
 			.setProperty("ont_ns", "http://www.kimschouten.com/sentiment/restaurant");
 		
-		runExperimentTable1(Ont,BoW,OntBoW,BoWOnt,train2015);
+//		runExperimentTable1(Ont,BoW,OntBoW,BoWOnt,train2015);
 		runExperimentTable2(Ont,BoW,OntBoW,BoWOnt,train2016);
-		runExperimentTable3(Ont,train2015,test2015,train2016,test2016);
+//		runExperimentTable3(Ont,train2015,test2015,train2016,test2016);
 //		runExperimentFigure5(Ont,BoW,OntBoW,BoWOnt,train2015,test2015);
 //		runExperimentFigure6(Ont,BoW,OntBoW,BoWOnt,train2016,test2016);
 //		runExperimentTable4(Ont,BoW,OntBoW,BoWOnt,train2015,test2015,train2016,test2016);
@@ -104,7 +106,7 @@ public class ESWC2018 {
 		Framework.log("****************************");
 		
 		Experiment.createNewExperiment()
-			.addAlgorithms(Ont)//, BoW, OntBoW, BoWOnt)
+			.addAlgorithms(Ont, BoW, OntBoW, BoWOnt)
 			.setDataset(train2015)	
 			.setCrossValidation(1, 10, 0.8, 0.2)
 			.run();

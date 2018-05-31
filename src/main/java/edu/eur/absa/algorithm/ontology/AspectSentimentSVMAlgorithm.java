@@ -629,8 +629,9 @@ public class AspectSentimentSVMAlgorithm extends AbstractAlgorithm {
 			double bestC = 0;
 			if (hasProperty("use_hyperparameter_optimization")){
 				double bestF1 = 0;
-				for (int gamma = -6; gamma <= 0; gamma++){
-					for (int c = -1; c <= 5; c++){
+				for (int gamma = -6; gamma <= -2; gamma++){
+					//c = -1;
+					for (int c =  -1 * gamma - 4; c <= 5; c++){
 						
 						model = new SMO();
 						model.setFilterType(new SelectedTag(SMO.FILTER_NORMALIZE, SMO.TAGS_FILTER));
